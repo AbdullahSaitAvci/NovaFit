@@ -17,11 +17,11 @@ namespace NovaFit.Models
         [Required]
         [Display(Name = "Başlangıç Saati")]
         [DataType(DataType.Time)]
-        public TimeSpan StartTime { get; set; }    // 10:00
+        public TimeSpan StartTime { get; set; }    // Başlama saati 10:00
 
         [Required]
         [Display(Name = "Bitiş Saati")]
         [DataType(DataType.Time)]
-        public TimeSpan EndTime { get; set; }      // 12:00
+        public TimeSpan EndTime { get; set; }      // Bitiş saati 12:00
     }
 }

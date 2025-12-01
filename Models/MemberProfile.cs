@@ -7,7 +7,6 @@ namespace NovaFit.Models
         [Key]
         public int MemberProfileId { get; set; }
 
-        // Identity kullanıcısının Id'si (String olarak tutulur)
         public string UserId { get; set; } = null!;
 
         [Display(Name = "Boy (cm)")]

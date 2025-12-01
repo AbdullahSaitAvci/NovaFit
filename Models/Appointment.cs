@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // decimal için gerekli olabilir
 
 namespace NovaFit.Models
 {
@@ -25,6 +26,7 @@ namespace NovaFit.Models
         public DateTime EndTime { get; set; }
 
         [Display(Name = "Ücret")]
+        [Column(TypeName = "decimal(18,2)")]  // Veri tabanında doğru tip için
         public decimal Price { get; set; }
 
         [Display(Name = "Durum")]

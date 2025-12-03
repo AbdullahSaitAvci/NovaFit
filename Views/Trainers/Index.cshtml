@@ -1,0 +1,66 @@
+﻿@model IEnumerable<NovaFit.Models.Trainer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageUrl)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bio)
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                {
+                    <img src="@item.ImageUrl" width="80" height="80" style="object-fit: cover; border-radius: 50%; border: 2px solid #ddd;" alt="@item.FullName" />
+                }
+                else
+                {
+                    <span class="text-muted">Resim Yok</span>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TrainerId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TrainerId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TrainerId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

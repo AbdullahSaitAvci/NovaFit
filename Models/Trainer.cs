@@ -24,6 +24,9 @@ namespace NovaFit.Models
         [DataType(DataType.MultilineText)] // Kutucuğun büyük olması için
         public string? Bio { get; set; }
 
+        [Display(Name = "Uzmanlık Alanı")]
+        public string? Expertise { get; set; }
+
         [Display(Name = "Fotoğraf")]
         public string? ImageUrl { get; set; } // Antrenör fotosu için
 

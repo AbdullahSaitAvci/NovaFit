@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore; 
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using NovaFit.Models;
 
 namespace NovaFit.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) // base(options) ile üst sınıfın (IdentityDbContext) yapıcı metodunu çağırıyoruz.
         {
         }
 
@@ -18,6 +19,5 @@ namespace NovaFit.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<MemberProfile> MemberProfiles { get; set; }
         public DbSet<AiRecommendation> AiRecommendations { get; set; }
-
     }
 }

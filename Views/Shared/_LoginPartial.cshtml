@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NovaFit.Models
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        // Giriş yapan kullanıcının bilgilerini veritabanından çekiyoruz
+        var currentUser = await UserManager.GetUserAsync(User);
+
+        // Eğer kullanıcı bulunduysa Adını Soyadını al, bulunamazsa e-postasını göster (Yedek plan)
+        var displayName = currentUser?.FullName ?? User.Identity?.Name;
+
+        <li class="nav-item">
+            <a class="nav-link text-dark fw-bold" href="#">Merhaba, @displayName!</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">Çıkış Yap</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+        </li>
+    }
+</ul>

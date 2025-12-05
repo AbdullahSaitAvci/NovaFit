@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace NovaFit.Controllers
         }
 
         // GET: Trainers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,7 +56,8 @@ namespace NovaFit.Controllers
         // POST: Trainers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TrainerId,FullName,Email,Phone,Bio,Expertise,Expertise")] Trainer trainer, IFormFile? imageFile)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("TrainerId,FullName,Email,Phone,Bio,Expertise")] Trainer trainer, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -95,6 +98,7 @@ namespace NovaFit.Controllers
         }
 
         // GET: Trainers/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -116,6 +120,7 @@ namespace NovaFit.Controllers
         // POST: Trainers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("TrainerId,FullName,Email,Phone,Bio,Expertise,ImageUrl")] Trainer trainer, IFormFile? imageFile)
         {
             if (id != trainer.TrainerId)
@@ -177,6 +182,7 @@ namespace NovaFit.Controllers
         }
 
         // GET: Trainers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -197,6 +203,7 @@ namespace NovaFit.Controllers
         // POST: Trainers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var trainer = await _context.Trainers.FindAsync(id);

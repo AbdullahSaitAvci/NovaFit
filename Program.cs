@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NovaFit.Data;
 using NovaFit.Models;
@@ -48,5 +49,47 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Rol ve Admin Kullanýcýsý Oluþturma Kýsmý
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+
+    // Rollerin Kontrolü ve Oluþturulmasý
+    var roles = new[] { "Admin", "Member" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new AppRole { Name = role });
+        }
+    }
+
+    // Admin Kullanýcýsýnýn Kontrolü ve Oluþturulmasý
+    var adminEmail = "g231210035@sakarya.edu.tr"; // Admin kullanýcýsýnýn email adresi
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new AppUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FullName = "Sistem Yöneticisi",
+            EmailConfirmed = true
+        };
+
+        // Þifre: sau 
+        var result = await userManager.CreateAsync(adminUser, "sau");
+
+        if (result.Succeeded)
+        {
+            // Kullanýcýya Admin rolünün atanmasý
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
 
 app.Run();

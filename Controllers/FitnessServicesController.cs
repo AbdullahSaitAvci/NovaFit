@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NovaFit.Data;
 using NovaFit.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NovaFit.Controllers
 {
@@ -44,16 +45,16 @@ namespace NovaFit.Controllers
         }
 
         // GET: FitnessServices/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: FitnessServices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("FitnessServiceId,ServiceName,Description,DurationMinutes,Price")] FitnessService fitnessService)
         {
             if (fitnessService.DurationMinutes % 15 != 0)
@@ -72,6 +73,7 @@ namespace NovaFit.Controllers
         }
 
         // GET: FitnessServices/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,10 +90,9 @@ namespace NovaFit.Controllers
         }
 
         // POST: FitnessServices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("FitnessServiceId,ServiceName,Description,DurationMinutes,Price")] FitnessService fitnessService)
         {
             if (fitnessService.DurationMinutes % 15 != 0)
@@ -129,6 +130,7 @@ namespace NovaFit.Controllers
         }
 
         // GET: FitnessServices/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -149,6 +151,7 @@ namespace NovaFit.Controllers
         // POST: FitnessServices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var fitnessService = await _context.FitnessServices.FindAsync(id);

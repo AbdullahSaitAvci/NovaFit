@@ -1,22 +1,128 @@
+/* Aydýnlýk Tema (Varsayýlan) */
+:root {
+    --ana-arkaplan: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    --ana-yazi-rengi: #212529;
+    --nav-link-rengi: #555555;
+    --baslik-rengi: #000000;
+    --muted-rengi: #6c757d; /* Standart gri */
+}
+
+/* Karanlýk Tema (Dark Mode) */
+[data-bs-theme="dark"] {
+    --ana-arkaplan: linear-gradient(120deg, #212529 0%, #343a40 100%);
+    --ana-yazi-rengi: #e0e0e0;
+    --nav-link-rengi: #f8f9fa;
+    --baslik-rengi: #ffffff;
+    --muted-rengi: #adb5bd; /* Daha parlak bir gri (okunabilirlik için) */
+}
+
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    background: var(--ana-arkaplan); /* Artýk deðiþkeni kullanýyor */
+    color: var(--ana-yazi-rengi);
+    margin-bottom: 60px; /* Footer için boþluk */
+    transition: background 0.3s ease, color 0.3s ease; /* Geçiþ yumuþatmak için */
+}
+
+/* Baþlýklarýn rengini zorla */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--baslik-rengi) !important;
+}
+
+/* Soluk yazýlarý (text-muted) deðiþkene baðladýk */
+.text-muted {
+    color: var(--muted-rengi) !important;
+}
+
+
+/* Navbar Linkleri */
+.navbar-brand, .nav-link {
+    color: var(--nav-link-rengi) !important;
+    transition: color 0.2s ease-in-out;
+}
+
+.navbar-text {
+    color: var(--ana-yazi-rengi) !important;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Kart (Card) Efektleri */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Kartlarýn arkaplanýný da temaya uydurmak istersen burayý açabilirsin: */
+     background-color: rgba(255, 255, 255, 0.1); 
+     border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+    }
+
+/* Footer */
+footer {
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+}
+
+/* Varsayýlan Bootstrap Focus Efektleri */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+
+/* Navbar Linkleri (Giriþ, Kayýt Ol, Antrenörler) */
+/* Normalde bunlar biraz þeffaf olur, biz tam beyaz ve parlak yapýyoruz */
+.navbar-nav .nav-link {
+    color: var(--nav-link-rengi) !important;
+    opacity: 1 !important; /* Þeffaflýðý kaldýr */
+}
+
+[data-bs-theme="dark"] .text-dark,
+[data-bs-theme="dark"] .link-dark {
+    color: #f8f9fa !important; /* Siyah yazýyý beyaza çevir */
+}
+
+/* Genelde bu kýsým da nav-link veya btn-link kullanýr */
+.navbar-text a {
+    color: var(--nav-link-rengi) !important;
+    text-decoration: none;
+}
+
+/* Eðer baþlýkta opacity varsa onu sýfýrla ve rengi zorla */
+h1, h2, h3, h4, h5, h6,
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+    color: var(--baslik-rengi) !important;
+    opacity: 1 !important; /* Solukluðu engelle */
+}
+
+/* VARSAYILAN (AYDINLIK TEMA) ÝÇÝN HOVER */
+/* Zemin açýk renk olduðu için üzerine gelince yazý KOYU olmalý */
+.navbar-nav .nav-link:hover,
+.navbar-text a:hover {
+    color: #000000 !important; /* Tam siyah */
+    text-shadow: none; /* Aydýnlýkta parlama efekti gözü yorar, kapattýk */
+    transform: translateY(-1px); /* Hafif yukarý zýplama efekti */
+}
+
+/* KARANLIK TEMA (DARK MODE) ÝÇÝN HOVER */
+/* Zemin koyu olduðu için üzerine gelince yazý BEYAZ olmalý */
+[data-bs-theme="dark"] .navbar-nav .nav-link:hover,
+[data-bs-theme="dark"] .navbar-text a:hover {
+    color: #ffffff !important; /* Tam beyaz */
+    text-shadow: 0 0 5px rgba(255,255,255,0.5); /* Neon parlama efekti */
 }

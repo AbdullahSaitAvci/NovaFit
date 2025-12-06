@@ -13,7 +13,7 @@ namespace NovaFit.Controllers
 {
     public class TrainersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context; // _context, veri tabanındaki antrenör verilerine erişmek için kullanılır
         private readonly IWebHostEnvironment _hostEnvironment; // dosya yükleme için
 
         public TrainersController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)

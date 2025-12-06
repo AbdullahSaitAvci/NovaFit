@@ -1,8 +1,74 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm text-center" style="background: linear-gradient(135deg, #ece9e6 0%, #ffffff 100%);">
+    <div class="container-fluid py-5">
+        <h1 class="display-4 fw-bold text-primary">Hayalindeki Vücuda Ulaş!</h1>
+        <p class="col-md-8 fs-4 mx-auto text-muted">
+            NovaFit ile profesyonel antrenörler eşliğinde, sana özel programlarla sınırlarını zorla.
+            Sağlıklı bir yaşam için ilk adımı bugün at.
+        </p>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5 mt-3 shadow">Hemen Üye Ol</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-lg px-5 mt-3 ms-2">Giriş Yap</a>
+        }
+        else
+        {
+            <a asp-controller="FitnessServices" asp-action="Index" class="btn btn-success btn-lg px-5 mt-3 shadow">Randevu Al</a>
+        }
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row text-center g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="display-5 text-primary mb-3">🏋️</div>
+                    <h3 class="card-title h4">Uzman Antrenörler</h3>
+                    <p class="card-text text-muted">Alanında sertifikalı, deneyimli hocalarla birebir çalışma fırsatı.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="display-5 text-primary mb-3">🥗</div>
+                    <h3 class="card-title h4">Kişiye Özel Program</h3>
+                    <p class="card-text text-muted">Senin hedeflerine ve vücut tipine uygun antrenman ve beslenme planı.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm p-3">
+                <div class="card-body">
+                    <div class="display-5 text-primary mb-3">⚡</div>
+                    <h3 class="card-title h4">Yapay Zeka Desteği</h3>
+                    <p class="card-text text-muted">Gelişimini takip eden ve sana öneriler sunan akıllı sistem.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row align-items-md-stretch">
+        <div class="col-md-6 mb-3">
+            <div class="h-100 p-5 text-white bg-dark rounded-3 shadow">
+                <h2>Antrenörlerimizi Tanı</h2>
+                <p>Ekibimizdeki profesyonelleri incele, uzmanlık alanlarına bak ve senin için en doğru hocayı seç.</p>
+                <a asp-controller="Trainers" asp-action="Index" class="btn btn-outline-light" type="button">Antrenörleri Gör</a>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="h-100 p-5 bg-primary text-white border rounded-3 shadow">
+                <h2>Hizmetler ve Fiyatlar</h2>
+                <p>Pilates, Yoga, Bodybuilding ve daha fazlası. Bütçene uygun paketleri şimdi incele.</p>
+                <a asp-controller="FitnessServices" asp-action="Index" class="btn btn-light text-primary fw-bold" type="button">Fiyatları İncele</a>
+            </div>
+        </div>
+    </div>
 </div>

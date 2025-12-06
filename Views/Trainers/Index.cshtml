@@ -1,68 +1,68 @@
 ﻿@model IEnumerable<NovaFit.Models.Trainer>
 
 @{
-    ViewData["Title"] = "Antrenör Listesi";
+    ViewData["Title"] = "Antrenörlerimiz"; 
 }
 
-<h1>Antrenörler</h1>
-
-<p>
-    @* Sadece Admin ise "Yeni Ekle" butonunun gösterilir *@
-    @if (User.IsInRole("Admin"))
-    {
-        <a asp-action="Create" class="btn btn-primary">Yeni Antrenör Ekle</a>
-    }
-</p>
-
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.FullName)</th>
-            <th>@Html.DisplayNameFor(model => model.Email)</th>
-            <th>@Html.DisplayNameFor(model => model.Phone)</th>
-            <th>@Html.DisplayNameFor(model => model.Expertise)</th>
-            <th>@Html.DisplayNameFor(model => model.ImageUrl)</th>
-            <th>İşlemler</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container py-4"> 
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6 fw-bold">Antrenör Kadromuz</h1>
+        @if (User.IsInRole("Admin"))
         {
-            <tr class="align-middle">
-                <td>
-                    @Html.DisplayFor(modelItem => item.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Phone)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Expertise)
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImageUrl))
-                    {
-                        <img src="@item.ImageUrl" width="60" height="60" style="object-fit: cover; border-radius: 50%; border: 2px solid #ddd;" alt="@item.FullName" />
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Resim Yok</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.TrainerId" class="btn btn-info btn-sm text-white">Detay</a>
-
-                    @* Sadece Admin ise Düzenle/Sil butonları gösterilir *@
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <span class="mx-1">|</span>
-                        <a asp-action="Edit" asp-route-id="@item.TrainerId" class="btn btn-warning btn-sm">Düzenle</a>
-                        <a asp-action="Delete" asp-route-id="@item.TrainerId" class="btn btn-danger btn-sm">Sil</a>
-                    }
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yeni Antrenör Ekle
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+
+    @if (!Model.Any()) // hiç antrenör yoksa
+    {
+        <div class="alert alert-info text-center">
+            Henüz kayıtlı antrenör bulunmamaktadır.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div style="height: 250px; overflow: hidden; background-color: #f8f9fa;">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" class="card-img-top" alt="@item.FullName" style="width: 100%; height: 100%; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <span class="fs-1">👤</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold text-primary">@item.FullName</h5>
+                            <p class="card-subtitle text-muted mb-2">@item.Expertise</p>
+                            <p class="card-text small text-secondary">
+                                @(item.Bio?.Length > 100 ? item.Bio.Substring(0, 100) + "..." : item.Bio)
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-white border-top-0 text-center pb-3">
+                            <a asp-action="Details" asp-route-id="@item.TrainerId" class="btn btn-outline-primary btn-sm rounded-pill px-3">Detaylar</a>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="mt-2 pt-2 border-top">
+                                    <a asp-action="Edit" asp-route-id="@item.TrainerId" class="btn btn-warning btn-sm py-0" style="font-size: 0.8rem;">Düzenle</a>
+                                    <a asp-action="Delete" asp-route-id="@item.TrainerId" class="btn btn-danger btn-sm py-0" style="font-size: 0.8rem;">Sil</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,20 @@
+﻿@inject SignInManager<AppUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<a class="list-group-item list-group-item-action @(ViewContext.ViewData["ActivePage"] as string == "Index" ? "active" : "")" asp-page="./Index">
+    <i class="bi bi-person-circle me-2"></i>Profil
+</a>
+
+<a class="list-group-item list-group-item-action @(ViewContext.ViewData["ActivePage"] as string == "ChangePassword" ? "active" : "")" id="change-password" asp-page="./ChangePassword">
+    <i class="bi bi-key-fill me-2"></i>Şifre Değiştir
+</a>
+
+<a class="list-group-item list-group-item-action @(ViewContext.ViewData["ActivePage"] as string == "TwoFactorAuthentication" ? "active" : "")" id="two-factor" asp-page="./TwoFactorAuthentication">
+    <i class="bi bi-shield-lock-fill me-2"></i>İki Aşamalı Doğrulama (2FA)
+</a>
+
+<a class="list-group-item list-group-item-action @(ViewContext.ViewData["ActivePage"] as string == "PersonalData" ? "active" : "")" id="personal-data" asp-page="./PersonalData">
+    <i class="bi bi-file-earmark-person-fill me-2"></i>Kişisel Veriler
+</a>

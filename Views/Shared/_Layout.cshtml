@@ -33,18 +33,24 @@
 
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item dropdown ms-3">
-                                <a class="nav-link dropdown-toggle btn btn-outline-danger text-danger" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Admin Paneli
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Yönetici Paneli
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Trainers" asp-action="Create">➕ Yeni Antrenör Ekle</a></li>
-                                    <li><a class="dropdown-item" asp-controller="FitnessServices" asp-action="Create">➕ Yeni Hizmet Ekle</a></li>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Index">
+                                            <i class="bi bi-speedometer2 me-2"></i>Genel Bakış (Dashboard)
+                                        </a>
+                                    </li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item disabled" href="#">Üye Yönetimi (Yakında)</a></li>
+
+                                    <li><a class="dropdown-item" asp-controller="Trainers" asp-action="Create">Antrenör Ekle</a></li>
+                                    <li><a class="dropdown-item" asp-controller="FitnessServices" asp-action="Create">Hizmet Ekle</a></li>
                                 </ul>
                             </li>
                         }
+
                     </ul>
                     <div class="nav-item dropdown me-2">
                         <button class="btn btn-link nav-link py-2 px-0 px-lg-2 dropdown-toggle d-flex align-items-center"

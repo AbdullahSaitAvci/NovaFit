@@ -1,34 +1,32 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using NovaFit.Models
-
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        // Giriş yapan kullanıcının bilgilerini veritabanından çekiyoruz
-        var currentUser = await UserManager.GetUserAsync(User);
-
-        // Eğer kullanıcı bulunduysa Adını Soyadını al, bulunamazsa e-postasını göster (Yedek plan)
-        var displayName = currentUser?.FullName ?? User.Identity?.Name;
+        var user = await UserManager.GetUserAsync(User);
+        var gorunenIsim = user?.FullName ?? User.Identity?.Name;
 
         <li class="nav-item">
-            <a class="nav-link text-dark fw-bold" href="#">Merhaba, @displayName!</a>
+            <a id="manage" class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Hesabımı Yönet">
+                Merhaba, @gorunenIsim!
+            </a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link btn btn-link ">Çıkış Yap</button>
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                <button id="logout" type="submit" class="nav-link btn btn-link border-0" style="text-decoration: none; color: inherit;">Çıkış Yap</button>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+            <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+            <a class="nav-link" id="login" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
         </li>
     }
 </ul>

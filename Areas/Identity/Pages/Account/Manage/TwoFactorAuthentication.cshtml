@@ -1,0 +1,38 @@
+﻿@page
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "İki Aşamalı Doğrulama (2FA)";
+    ViewData["ActivePage"] = "TwoFactorAuthentication"; // Menüde burayı aktif yapar
+}
+
+<h3 class="mb-4">@ViewData["Title"]</h3>
+
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    Google Authenticator veya Microsoft Authenticator uygulamasını kullanarak hesabınızı koruyun.
+</div>
+
+@if (Model.Is2faEnabled)
+{
+    <div class="alert alert-success mb-4">
+        <i class="bi bi-check-circle-fill me-2"></i>2FA şu anda <strong>ETKİN</strong>.
+    </div>
+
+    <a asp-page="./Disable2fa" class="btn btn-danger mb-3">2FA'yı Kapat</a>
+    <a asp-page="./GenerateRecoveryCodes" class="btn btn-outline-secondary mb-3">Kurtarma Kodlarını Yenile</a>
+}
+else
+{
+    <div class="mb-4">
+        <p>Henüz iki aşamalı doğrulamayı etkinleştirmediniz.</p>
+        <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary btn-lg">
+            <i class="bi bi-qr-code-scan me-2"></i>Authenticator Uygulaması Ekle
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

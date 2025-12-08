@@ -12,8 +12,8 @@
 
         @if (!User.Identity.IsAuthenticated)
         {
-            <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5 mt-3 shadow">Hemen Üye Ol</a>
-            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-lg px-5 mt-3 ms-2">Giriş Yap</a>
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg me-3">Hemen Üye Ol</a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-light btn-lg">Giriş Yap</a>
         }
         else
         {

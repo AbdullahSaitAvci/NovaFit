@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Yönetici Paneli";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">Yönetici Paneli</h1>
+            <p class="text-muted">Hoş geldin, sistem genel durumunu buradan yönetebilirsin.</p>
+        </div>
+        <div>
+            <span class="badge bg-success p-2">Sistem Aktif</span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
+                <div class="card-body text-center p-4">
+                    <div class="display-4 text-warning mb-2">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h3 class="card-title text-white">@ViewBag.TrainerCount</h3>
+                    <p class="text-muted">Kayıtlı Antrenör</p>
+                    <hr class="border-secondary" />
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Trainers" asp-action="Index" class="btn btn-outline-light btn-sm">Listeyi Gör</a>
+                        <a asp-controller="Trainers" asp-action="Create" class="btn btn-warning btn-sm text-dark fw-bold">+ Yeni Ekle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
+                <div class="card-body text-center p-4">
+                    <div class="display-4 text-primary mb-2">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <h3 class="card-title text-white">@ViewBag.ServiceCount</h3>
+                    <p class="text-muted">Aktif Hizmet</p>
+                    <hr class="border-secondary" />
+                    <div class="d-grid gap-2">
+                        <a asp-controller="FitnessServices" asp-action="Index" class="btn btn-outline-light btn-sm">Listeyi Gör</a>
+                        <a asp-controller="FitnessServices" asp-action="Create" class="btn btn-primary btn-sm fw-bold">+ Yeni Ekle</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
+                <div class="card-body text-center p-4">
+                    <div class="display-4 text-info mb-2">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h3 class="card-title text-white">@ViewBag.UserCount</h3>
+                    <p class="text-muted">Toplam Kullanıcı</p>
+                    <hr class="border-secondary" />
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" disabled>Kullanıcıları Yönet</button>
+                        <button class="btn btn-info btn-sm text-dark fw-bold" disabled>Site Ayarları</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4">
+        <h4 class="mb-3">Son Hareketler</h4>
+        <div class="alert alert-secondary d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <div>
+                Sistem şu an sorunsuz çalışıyor. Veritabanı bağlantısı aktif.
+            </div>
+        </div>
+    </div>
+</div>

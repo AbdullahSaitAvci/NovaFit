@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using NovaFit.Models
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,6 +35,15 @@
                         <li class="nav-item">
                             <a class="nav-link fw-bold" asp-area="" asp-controller="FitnessServices" asp-action="Index">Hizmetler & Fiyatlar</a>
                         </li>
+
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Trainer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-success" asp-area="" asp-controller="Trainers" asp-action="CreateAvailability">
+                                    <i class="bi bi-calendar-plus-fill me-1"></i> Saat Ekle
+                                </a>
+                            </li>
+                        }
 
                         @if (User.IsInRole("Admin"))
                         {

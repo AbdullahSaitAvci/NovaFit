@@ -1,42 +1,83 @@
 ﻿@model NovaFit.Models.FitnessService
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Hizmet Detayı";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-3">
 
-<div>
-    <h4>FitnessService</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ServiceName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ServiceName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DurationMinutes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DurationMinutes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-    </dl>
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="mb-0 fw-bold">@Model.ServiceName</h2>
+                    <span class="badge bg-light text-primary mt-2 rounded-pill px-3">Hizmet Detayı</span>
+                </div>
+
+                <div class="card-body p-5">
+
+                    <div class="row text-center mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="p-3 border rounded bg-light">
+                                <h5 class="text-muted mb-1"><i class="bi bi-tag-fill"></i> Ücret</h5>
+                                <h3 class="text-success fw-bold">@Model.Price.ToString("C2")</h3>
+                                <small class="text-muted">ders başına</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light">
+                                <h5 class="text-muted mb-1"><i class="bi bi-stopwatch-fill"></i> Süre</h5>
+                                <h3 class="text-info text-dark fw-bold">@Model.DurationMinutes dk</h3>
+                                <small class="text-muted">ortalama süre</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="mb-5">
+                        <h4 class="fw-bold text-secondary mb-3">Hizmet Hakkında</h4>
+                        <p class="lead text-dark" style="line-height: 1.8;">
+                            @Model.Description
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Trainers"
+                           asp-action="Index"
+                           asp-route-searchString="@Model.ServiceName"
+                           class="btn btn-primary btn-lg py-3 shadow-sm hover-effect">
+                            <i class="bi bi-person-video3 me-2"></i> Bu Hizmeti Veren Eğitmenleri Listele
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="mb-3">
+                            <a asp-action="Edit" asp-route-id="@Model?.FitnessServiceId" class="btn btn-warning me-2">
+                                <i class="bi bi-pencil-square"></i> Düzenle
+                            </a>
+                        </div>
+                    }
+
+                    <a asp-action="Index" class="text-decoration-none text-muted">
+                        <i class="bi bi-arrow-left"></i> Listeye Geri Dön
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.FitnessServiceId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .hover-effect {
+        transition: transform 0.2s;
+    }
+
+        .hover-effect:hover {
+            transform: scale(1.02);
+        }
+</style>

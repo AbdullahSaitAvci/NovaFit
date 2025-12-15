@@ -270,6 +270,9 @@ namespace NovaFit.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -289,6 +292,9 @@ namespace NovaFit.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TrainerAvailabilityId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
@@ -297,6 +303,8 @@ namespace NovaFit.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("FitnessServiceId");
+
+                    b.HasIndex("TrainerAvailabilityId");
 
                     b.HasIndex("TrainerId");
 
@@ -400,19 +408,30 @@ namespace NovaFit.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerAvailabilityId"));
 
-                    b.Property<int>("DayOfWeek")
+                    b.Property<int>("Capacity")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
 
+                    b.Property<int?>("FitnessServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsFull")
+                        .HasColumnType("bit");
+
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<int>("TrainerId")
+                    b.Property<int?>("TrainerId")
                         .HasColumnType("int");
 
                     b.HasKey("TrainerAvailabilityId");
+
+                    b.HasIndex("FitnessServiceId");
 
                     b.HasIndex("TrainerId");
 
@@ -504,6 +523,10 @@ namespace NovaFit.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("NovaFit.Models.TrainerAvailability", "TrainerAvailability")
+                        .WithMany("Appointments")
+                        .HasForeignKey("TrainerAvailabilityId");
+
                     b.HasOne("NovaFit.Models.Trainer", "Trainer")
                         .WithMany("Appointments")
                         .HasForeignKey("TrainerId")
@@ -513,15 +536,21 @@ namespace NovaFit.Migrations
                     b.Navigation("FitnessService");
 
                     b.Navigation("Trainer");
+
+                    b.Navigation("TrainerAvailability");
                 });
 
             modelBuilder.Entity("NovaFit.Models.TrainerAvailability", b =>
                 {
+                    b.HasOne("NovaFit.Models.FitnessService", "FitnessService")
+                        .WithMany()
+                        .HasForeignKey("FitnessServiceId");
+
                     b.HasOne("NovaFit.Models.Trainer", "Trainer")
-                        .WithMany("Availabilities")
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("TrainerAvailabilities")
+                        .HasForeignKey("TrainerId");
+
+                    b.Navigation("FitnessService");
 
                     b.Navigation("Trainer");
                 });
@@ -551,9 +580,14 @@ namespace NovaFit.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("Availabilities");
-
                     b.Navigation("Specializations");
+
+                    b.Navigation("TrainerAvailabilities");
+                });
+
+            modelBuilder.Entity("NovaFit.Models.TrainerAvailability", b =>
+                {
+                    b.Navigation("Appointments");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,45 +4,164 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Trainer</h4>
+<div class="container mt-4">
+    <h1>Eğitmen Detayı</h1>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Bio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Bio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.TrainerId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    
+    <div class="row">
+        <div class="col-md-4 text-center">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.FullName" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;" />
+            }
+            else
+            {
+                <img src="/img/trainers/default_coach.png" class="img-fluid rounded" alt="Varsayılan Resim" />
+            }
+        </div>
+
+        <div class="col-md-8">
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FullName)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Phone)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Bio)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Bio)</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="text-primary border-bottom pb-2">
+            <i class="bi bi-calendar-week"></i> @Model.FullName - Müsaitlik Durumu
+        </h3>
+
+        @if (Model.TrainerAvailabilities != null && Model.TrainerAvailabilities.Any())
+        {
+            <div class="table-responsive mt-3">
+                <table class="table table-hover table-bordered text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Başlangıç</th>
+                            <th>Bitiş</th>
+                            <th>Ders Tipi</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TrainerAvailabilities.OrderBy(x => x.Date).ThenBy(x => x.StartTime))
+                        {
+                            // --- MANTIK HESAPLAMA KISMI (Kodun kısaldığı yer burası) ---
+                            // Veritabanından gelen randevu sayısını alıyoruz
+                            int doluKoltuk = item.Appointments?.Count ?? 0;
+                            // Kapasiteden çıkarıp kalanı buluyoruz
+                            int kalanKapasite = item.Capacity - doluKoltuk;
+                            // Yer kaldı mı kontrolü
+                            bool tamDolu = kalanKapasite <= 0;
+
+                            <tr class="@(tamDolu ? "table-secondary" : "")">
+                                
+                                <td>@item.Date.ToShortDateString()</td>
+                                <td>@item.StartTime.ToString(@"hh\:mm")</td>
+                                <td>@item.EndTime.ToString(@"hh\:mm")</td>
+                                
+                                <td>
+                                    @if(item.FitnessService != null)
+                                    {
+                                        <span class="badge bg-info text-dark">@item.FitnessService.ServiceName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Genel</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (tamDolu)
+                                    {
+                                        <span class="badge bg-danger">TAMAMEN DOLU</span>
+                                    }
+                                    else
+                                    {
+                                        if(item.Capacity > 1)
+                                        {
+                                            <span class="badge bg-success">@kalanKapasite Kişilik Yer Var</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Müsait</span>
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (tamDolu)
+                                    {
+                                         <button class="btn btn-sm btn-secondary" disabled>Dolu</button>
+                                    }
+                                    else
+                                    {
+                                     // 1. ÖNCE YÖNETİCİLERİ KONTROL ET VE ENGELLE
+                                    // Eğer kullanıcı Admin veya Trainer ise, Member olsa bile buraya takılır.
+                                    if (User.IsInRole("Admin") || User.IsInRole("Trainer"))
+                                    {
+                                         <span class="badge bg-secondary">Yönetici İşlemi Yok</span>
+                                    }
+                                    // 2. YÖNETİCİ DEĞİLSE VE ÜYE İSE İZİN VER
+                                    else if (User.Identity.IsAuthenticated && User.IsInRole("Member"))
+                                    {
+                                     <form asp-action="RandevuAl" asp-controller="Trainers" method="post">
+                
+                                     <input type="hidden" name="id" value="@item.TrainerAvailabilityId" />
+                                     <input type="hidden" name="serviceId" value="@(item.FitnessServiceId ?? 1)" />
+
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                    Randevu Al
+                                    </button>
+                                    </form>
+                                    }
+                                // 3. GİRİŞ YAPMAMIŞSA
+                                    else if (!User.Identity.IsAuthenticated)
+                                    {
+                                    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-primary">
+                                    Giriş Yap
+                                    </a>
+                                    }
+                                    // 4. DİĞER DURUMLAR
+                                    else
+                                    {
+                                    <span class="text-muted small">Yetkisiz</span>
+                                    }
+                            }
+                                </td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning mt-3">
+                <i class="bi bi-info-circle"></i> Bu antrenör için henüz uygun saat eklenmemiştir.
+            </div>
+        }
+    </div>
+
+    <div class="mt-3 mb-5">
+        @if (User.IsInRole("Admin")) 
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.TrainerId" class="btn btn-warning">Düzenle</a> <span>|</span>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+    </div>
 </div>

@@ -87,8 +87,8 @@ namespace NovaFit.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                // FORM'DAN GELEN VERİLERİ BURADA EŞLEŞTİRİYORUZ
-                user.FullName = Input.FullName; // <-- İŞTE EKSİK OLAN SATIR BUYDU!
+                // Formdan gelen FullName bilgisini AppUser nesnesine atıyoruz
+                user.FullName = Input.FullName; 
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -99,30 +99,32 @@ namespace NovaFit.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("Kullanıcı yeni bir hesap oluşturdu.");
 
-                    // Varsayılan rolü "Member" olarak atayalım (İsteğe bağlı)
+                    // Varsayılan Rol Ataması
                     await _userManager.AddToRoleAsync(user, "Member");
 
+                    // Email Doğrulama Token Oluşturma 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Emailinizi onaylayın",
-                        $"Lütfen hesabınızı onaylamak için <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>buraya tıklayın</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    // Email gönderme işlemi 
+                    try
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        await _emailSender.SendEmailAsync(Input.Email, "Emailinizi onaylayın",
+                            $"Lütfen hesabınızı onaylamak için <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>buraya tıklayın</a>.");
                     }
-                    else
+                    catch
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                        
+                    }                    
+                    await _signInManager.SignInAsync(user, isPersistent: false); // Kullanıcıyı otomatik olarak giriş yaptırıyoruz
+                    return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)
                 {

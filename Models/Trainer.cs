@@ -32,7 +32,7 @@ namespace NovaFit.Models
 
         // --- İlişkiler ---
         public virtual ICollection<TrainerSpecialization> Specializations { get; set; } = new List<TrainerSpecialization>();
-        public virtual ICollection<TrainerAvailability> Availabilities { get; set; } = new List<TrainerAvailability>();
+        public virtual ICollection<TrainerAvailability> TrainerAvailabilities { get; set; } = new List<TrainerAvailability>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

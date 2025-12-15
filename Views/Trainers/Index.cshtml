@@ -31,7 +31,11 @@
                         <div style="height: 250px; overflow: hidden; background-color: #f8f9fa;">
                             @if (!string.IsNullOrEmpty(item.ImageUrl))
                             {
-                                <img src="@item.ImageUrl" class="card-img-top" alt="@item.FullName" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/img/trainers/default_coach.png" : item.ImageUrl)"
+                                     class="card-img-top"
+                                     alt="@item.FullName"
+                                     style="height: 250px; object-fit: cover;"
+                                     onerror="this.onerror=null;this.src='/img/trainers/default_coach.png';" />
                             }
                             else
                             {

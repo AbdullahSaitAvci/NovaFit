@@ -1,0 +1,68 @@
+﻿@model NovaFit.Models.TrainerAvailability
+
+@{
+    ViewData["Title"] = "Müsaitlik Ekle";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">📅 Ders Saati / Müsaitlik Ekle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="CreateAvailability">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Date" class="control-label fw-bold"></label>
+                    <input asp-for="Date" type="date" class="form-control"
+                           value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label asp-for="StartTime" class="control-label fw-bold"></label>
+                        <input asp-for="StartTime" type="time" class="form-control" />
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label asp-for="EndTime" class="control-label fw-bold"></label>
+                        <input asp-for="EndTime" type="time" class="form-control" />
+                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label asp-for="Capacity" class="control-label fw-bold">Kontenjan (Kişi Sayısı)</label>
+                        <input asp-for="Capacity" class="form-control" min="1" max="50" value="1" />
+                        <small class="text-muted">Bireysel ders için 1, grup dersi için kontenjan giriniz.</small>
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label asp-for="FitnessServiceId" class="control-label fw-bold">Ders Tipi / Hizmet</label>
+                        <select asp-for="FitnessServiceId" class="form-control" asp-items="ViewBag.FitnessServiceId">
+                            <option value="">-- Genel / Bireysel Koçluk --</option>
+                        </select>
+                        <small class="text-muted">Özel bir ders ise (Örn: Pilates) seçiniz.</small>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Kaydet</button>
+                    <a asp-action="Index" class="btn btn-link text-center mt-2">Geri Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

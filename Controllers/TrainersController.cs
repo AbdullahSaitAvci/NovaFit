@@ -23,9 +23,19 @@ namespace NovaFit.Controllers
         }
 
         // GET: Trainers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Trainers.ToListAsync());
+            var trainers = from t in _context.Trainers
+                           select t;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                // Eğitmenin uzmanlık alanında (Expertise) arama yapıyoruz
+                // Örn: Kullanıcı "Pilates" ararsa, uzmanlığında Pilates yazanlar gelir.
+                trainers = trainers.Where(s => s.Expertise.Contains(searchString));
+            }
+
+            return View(await trainers.ToListAsync());
         }
 
         // GET: Trainers/Details/5
@@ -43,70 +53,66 @@ namespace NovaFit.Controllers
             return View(trainer);
         }
 
-        // Randevu Alma İşlemleri
-        [HttpPost]
+        // Üye Randevu Yönetim İşlemleri
+
+        // Üyenin Randevularını Listele
         [Authorize(Roles = "Member")]
-        public async Task<IActionResult> RandevuAl(int id, int serviceId) // id: AvailabilityId
+        public async Task<IActionResult> MyAppointments()
         {
-            // Slotu ve içindeki randevuları getir
-            var slot = await _context.TrainerAvailabilities
-                                     .Include(x => x.Appointments)
-                                     .FirstOrDefaultAsync(x => x.TrainerAvailabilityId == id);
-
-            if (slot == null) return NotFound();
-
-            // Kontenjan Kontrolü (IsBooked yerine kapasiteye bakıyoruz)
-            if (slot.Appointments.Count >= slot.Capacity)
-            {
-                TempData["Error"] = "Bu dersin kontenjanı dolmuştur.";
-                return RedirectToAction("Details", new { id = slot.TrainerId });
-            }
-
             var userId = _userManager.GetUserId(User);
 
-            // Aynı kullanıcının aynı derse tekrar kaydolmasını engeller
-            if (slot.Appointments.Any(a => a.MemberUserId == userId))
+            var appointments = await _context.Appointments
+                .Include(a => a.Trainer)           // Hangi hoca?
+                .Include(a => a.FitnessService)    // Hangi ders?
+                .Include(a => a.TrainerAvailability) // Tarih bilgileri için (Opsiyonel, zaten StartTime var)
+                .Where(a => a.MemberUserId == userId)
+                .OrderByDescending(a => a.StartTime) // En yeni tarih en üstte
+                .ToListAsync();
+
+            return View(appointments);
+        }
+
+        // Üyenin Randevusunu İptal Etmesi
+        [HttpPost]
+        [Authorize(Roles = "Member")]
+        public async Task<IActionResult> CancelMyAppointment(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            // Randevuyu bul (Sadece bu kullanıcıya aitse!)
+            var appointment = await _context.Appointments
+                .Include(a => a.TrainerAvailability)
+                .FirstOrDefaultAsync(a => a.AppointmentId == id && a.MemberUserId == userId);
+
+            if (appointment == null) return NotFound();
+
+            // Geçmiş randevu iptal edilemez (Opsiyonel kural)
+            if (appointment.StartTime < DateTime.Now)
             {
-                TempData["Error"] = "Bu derse zaten kaydınız bulunmaktadır.";
-                return RedirectToAction("Details", new { id = slot.TrainerId });
+                TempData["Error"] = "Geçmiş randevular iptal edilemez.";
+                return RedirectToAction(nameof(MyAppointments));
             }
 
-            // Hizmet ücretini bul (Opsiyonel: serviceId gelmezse 0)
-            decimal ucret = 0;
-            if (serviceId > 0)
+            // Durumu İptal Yap
+            appointment.Status = AppointmentStatus.Cancelled;
+
+            // KONTENJANI GERİ AÇMA MANTIĞI
+            if (appointment.TrainerAvailability != null)
             {
-                var service = await _context.FitnessServices.FindAsync(serviceId);
-                ucret = service?.Price ?? 0;
+                // Eğer slot "Full" ise ve biz çıkıyorsak, artık yer var demektir.
+                if (appointment.TrainerAvailability.IsFull)
+                {
+                    appointment.TrainerAvailability.IsFull = false;
+                    _context.Update(appointment.TrainerAvailability);
+                }
             }
 
-            // Yeni randevu oluşturma 
-            var yeniRandevu = new Appointment
-            {
-                TrainerAvailabilityId = id,
-                TrainerId = (int)slot.TrainerId,
-                MemberUserId = userId,
-                FitnessServiceId = serviceId > 0 ? serviceId : 1, // Hizmet seçilmediyse varsayılan ID (veya null kontrolü yapabilirsin)
-                StartTime = slot.Date + slot.StartTime,
-                EndTime = slot.Date + slot.EndTime,
-                Price = ucret,
-                Status = AppointmentStatus.Pending,
-                CreatedDate = DateTime.Now
-            };
-
-            _context.Add(yeniRandevu);
-
-            // Eğer kontenjan dolduysa slotu dolu işaretle
-            if (slot.Appointments.Count + 1 >= slot.Capacity)
-            {
-                slot.IsFull = true;
-                _context.Update(slot);
-            }
+            _context.Update(appointment);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Randevunuz başarıyla oluşturuldu!";
-            return RedirectToAction(nameof(Details), new { id = slot.TrainerId });
+            TempData["Info"] = "Randevunuz iptal edildi.";
+            return RedirectToAction(nameof(MyAppointments));
         }
-        // ==========================================
 
         // GET: Trainers/Create
         [Authorize(Roles = "Admin")]
@@ -281,7 +287,82 @@ namespace NovaFit.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Details), new { id = trainerProfile.TrainerId });
             }
+            ViewData["FitnessServiceId"] = new SelectList(_context.FitnessServices, "FitnessServiceId", "ServiceName", model.FitnessServiceId);
+
             return View(model);
+        }
+
+        // Eğitmenlerin Randevu Yönetim İşlemleri
+
+        // Randevuları Listeleme Sayfası
+        [Authorize(Roles = "Trainer")]
+        public async Task<IActionResult> ManageAppointments()
+        {
+            // Giriş yapan eğitmeni bul
+            var user = await _userManager.GetUserAsync(User);
+            var trainer = await _context.Trainers.FirstOrDefaultAsync(t => t.Email == user.Email);
+
+            if (trainer == null) return NotFound("Eğitmen profili bulunamadı.");
+
+            // Bu eğitmene ait randevuları getir
+            var appointments = await _context.Appointments
+                .Include(a => a.MemberUser)
+                .Include(a => a.FitnessService)
+                .Where(a => a.TrainerId == trainer.TrainerId)
+                .OrderByDescending(a => a.StartTime) 
+                .ToListAsync();
+
+            return View(appointments);
+        }
+
+        // Randevu Onaylama İşlemi
+        [HttpPost]
+        [Authorize(Roles = "Trainer")]
+        public async Task<IActionResult> ApproveAppointment(int id)
+        {
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment == null) return NotFound();
+
+            // Durumu güncelle
+            appointment.Status = AppointmentStatus.Confirmed;
+            _context.Update(appointment);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Randevu onaylandı.";
+            return RedirectToAction(nameof(ManageAppointments));
+        }
+
+        // Randevu Reddetme/İptal İşlemi
+        [HttpPost]
+        [Authorize(Roles = "Trainer")]
+        public async Task<IActionResult> RejectAppointment(int id)
+        {
+            var appointment = await _context.Appointments
+                .Include(a => a.TrainerAvailability) // Kontenjanı geri açmak için buna ihtiyaç var
+                .FirstOrDefaultAsync(a => a.AppointmentId == id);
+
+            if (appointment == null) return NotFound();
+
+            // Durumu güncelle
+            appointment.Status = AppointmentStatus.Cancelled;
+
+            // ÖNEMLİ: Randevu iptal edilirse, o saatteki kontenjan (IsFull) geri açılmalı!
+            if (appointment.TrainerAvailability != null)
+            {
+                // Eğer slot "Tamamen Dolu" işaretlendiyse, artık yer açıldığı için false yapar.
+                if (appointment.TrainerAvailability.IsFull)
+                {
+                    appointment.TrainerAvailability.IsFull = false;
+                    _context.Update(appointment.TrainerAvailability);
+                }
+                // Not: Appointment tablosunda durmaya devam eder ama durumu "Cancelled" olur.
+            }
+
+            _context.Update(appointment);
+            await _context.SaveChangesAsync();
+
+            TempData["Info"] = "Randevu reddedildi/iptal edildi.";
+            return RedirectToAction(nameof(ManageAppointments));
         }
     }
 }

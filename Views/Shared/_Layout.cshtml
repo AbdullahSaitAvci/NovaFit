@@ -36,31 +36,69 @@
                             <a class="nav-link fw-bold" asp-area="" asp-controller="FitnessServices" asp-action="Index">Hizmetler & Fiyatlar</a>
                         </li>
 
-                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Trainer"))
+                        @if (User.IsInRole("Member"))
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-controller="Trainers" asp-action="MyAppointments">
+                                    <i class="bi bi-journal-check text-success"></i> Randevularım
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Trainer"))
+                        {
+                            <li class="nav-item border-start border-secondary mx-2 d-none d-lg-block"></li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Trainers" asp-action="ManageAppointments">
+                                    <i class="bi bi-calendar-check-fill text-primary"></i> Randevu Yönetimi
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link fw-bold text-success" asp-area="" asp-controller="Trainers" asp-action="CreateAvailability">
-                                    <i class="bi bi-calendar-plus-fill me-1"></i> Saat Ekle
+                                    <i class="bi bi-plus-circle-fill"></i> Saat Ekle
                                 </a>
                             </li>
                         }
 
                         @if (User.IsInRole("Admin"))
                         {
+                            <li class="nav-item border-start border-secondary mx-2 d-none d-lg-block"></li>
+
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Yönetici Paneli
+                                <a class="nav-link dropdown-toggle fw-bold" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shield-lock-fill text-danger"></i> Yönetici Paneli
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <ul class="dropdown-menu shadow" aria-labelledby="adminDropdown">
+
                                     <li>
                                         <a class="dropdown-item" asp-controller="Admin" asp-action="Index">
                                             <i class="bi bi-speedometer2 me-2"></i>Genel Bakış (Dashboard)
                                         </a>
                                     </li>
+
                                     <li><hr class="dropdown-divider"></li>
 
-                                    <li><a class="dropdown-item" asp-controller="Trainers" asp-action="Create">Antrenör Ekle</a></li>
-                                    <li><a class="dropdown-item" asp-controller="FitnessServices" asp-action="Create">Hizmet Ekle</a></li>
+                                    <li><h6 class="dropdown-header">Hızlı Ekle</h6></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Trainers" asp-action="Create">
+                                            <i class="bi bi-person-plus-fill me-2"></i>Antrenör Ekle
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="FitnessServices" asp-action="Create">
+                                            <i class="bi bi-patch-plus-fill me-2"></i>Hizmet Ekle
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="FitnessServices" asp-action="Index">
+                                            <i class="bi bi-list-check me-2"></i>Hizmetleri Yönet
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         }

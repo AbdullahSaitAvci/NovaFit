@@ -1,0 +1,119 @@
+﻿@model IEnumerable<NovaFit.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevu Yönetimi";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-calendar-check text-primary"></i> Gelen Randevu Talepleri</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Listeye Dön
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info shadow-sm">
+            <i class="bi bi-info-circle-fill me-2"></i> Henüz size gelen bir randevu talebi bulunmamaktadır.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tarih & Saat</th>
+                            <th>Öğrenci / Üye</th>
+                            <th>Ders / Hizmet</th>
+                            <th>Ücret</th>
+                            <th>Durum</th>
+                            <th class="text-end">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            // İptal edilen satırları gri yapalım
+                            bool isCancelled = item.Status == NovaFit.Models.AppointmentStatus.Cancelled;
+                            string rowClass = isCancelled ? "table-secondary text-muted" : "";
+
+                            <tr class="@rowClass">
+                                <td>
+                                    <div class="fw-bold">@item.StartTime.ToString("dd.MM.yyyy")</div>
+                                    <div class="small @(isCancelled ? "text-muted" : "text-primary")">
+                                        @item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="fw-semibold">@(item.MemberUser?.FullName ?? "Bilinmeyen Üye")</div>
+                                    <div class="small text-muted">@(item.MemberUser?.Email ?? item.MemberUserId)</div>
+                                </td>
+
+                                <td>
+                                    @if (item.FitnessService != null)
+                                    {
+                                        <span class="badge bg-info text-dark">@item.FitnessService.ServiceName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark border">Genel / Bireysel</span>
+                                    }
+                                </td>
+
+                                <td>@item.Price.ToString("C2")</td>
+
+                                <td>
+                                    @switch (item.Status)
+                                    {
+                                        case NovaFit.Models.AppointmentStatus.Pending:
+                                            <span class="badge bg-warning text-dark">Onay Bekliyor</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Confirmed:
+                                            <span class="badge bg-success">Onaylandı</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Cancelled:
+                                            <span class="badge bg-secondary">İptal Edildi</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Completed:
+                                            <span class="badge bg-primary">Tamamlandı</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    @if (item.Status == NovaFit.Models.AppointmentStatus.Pending)
+                                    {
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <form asp-action="ApproveAppointment" method="post">
+                                                <input type="hidden" name="id" value="@item.AppointmentId" />
+                                                <button type="submit" class="btn btn-sm btn-success" title="Onayla">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+
+                                            <form asp-action="RejectAppointment" method="post">
+                                                <input type="hidden" name="id" value="@item.AppointmentId" />
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Reddet"
+                                                        onclick="return confirm('Bu randevuyu reddetmek istediğinize emin misiniz?');">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small fst-italic">İşlem Tamam</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

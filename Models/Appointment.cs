@@ -9,34 +9,37 @@ namespace NovaFit.Models
         [Key]
         public int AppointmentId { get; set; }
 
-        // --- İLİŞKİLER (Foreign Keys) ---
+        // İlişkiler
 
-        // 1. Randevuyu alan Üye (Identity User ID)
+        // Randevuyu alan Üye (Identity User ID)
         [Display(Name = "Üye")]
         public string MemberUserId { get; set; } = null!;
 
-        // 2. Hangi Eğitmen?
+        [ForeignKey("MemberUserId")]
+        public virtual AppUser? MemberUser { get; set; } // Üyenin detaylarına (Ad, Soyad) erişmek için
+
+        // Hangi Eğitmen?
         [Display(Name = "Eğitmen")]
         public int TrainerId { get; set; }
 
         [ForeignKey("TrainerId")]
         public virtual Trainer? Trainer { get; set; }
 
-        // 3. Hangi Hizmet?
+        // Hangi Hizmet?
         [Display(Name = "Hizmet")]
         public int FitnessServiceId { get; set; }
 
         [ForeignKey("FitnessServiceId")]
         public virtual FitnessService? FitnessService { get; set; }
 
-        // 4. Hangi Müsaitlik Slotuna Bağlı?
+        // Hangi Müsaitlik Slotuna Bağlı?
         [Display(Name = "Ders Saati Kaydı")]
         public int? TrainerAvailabilityId { get; set; }
 
         [ForeignKey("TrainerAvailabilityId")]
         public virtual TrainerAvailability? TrainerAvailability { get; set; }
 
-        // --- RANDEVU DETAYLARI ---
+        // Randevu Detayları
 
         [Required(ErrorMessage = "Başlangıç tarihi zorunludur.")]
         [Display(Name = "Başlangıç Tarihi")]
@@ -59,10 +62,6 @@ namespace NovaFit.Models
         [Display(Name = "Oluşturulma Tarihi")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
-
-    // ENUM TANIMI
-    // Eğer projende başka bir yerde "public enum AppointmentStatus" varsa
-    // hata alırsın. Sadece burada tanımlı olduğundan emin ol.
     public enum AppointmentStatus
     {
         [Display(Name = "Beklemede")]

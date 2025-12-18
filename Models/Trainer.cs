@@ -31,8 +31,8 @@ namespace NovaFit.Models
         public string? ImageUrl { get; set; } // Antrenör fotosu için
 
         // --- İlişkiler ---
-        public virtual ICollection<TrainerSpecialization> Specializations { get; set; } = new List<TrainerSpecialization>();
         public virtual ICollection<TrainerAvailability> TrainerAvailabilities { get; set; } = new List<TrainerAvailability>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public virtual ICollection<TrainerSpecialization> TrainerSpecializations { get; set; } = new List<TrainerSpecialization>();
     }
 }

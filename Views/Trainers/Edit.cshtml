@@ -4,67 +4,109 @@
     ViewData["Title"] = "Antrenörü Düzenle";
 }
 
-<h1>Antrenörü Düzenle</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card shadow-lg border-0 rounded-3">
 
-            <input type="hidden" asp-for="TrainerId" />
-            <input type="hidden" asp-for="ImageUrl" />
+                <div class="card-header bg-warning bg-gradient text-dark py-3">
+                    <h3 class="card-title mb-0 text-center fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i> Antrenör Bilgilerini Güncelle
+                    </h3>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" enctype="multipart/form-data">
+
+                        <input type="hidden" asp-for="TrainerId" />
+                        <input type="hidden" asp-for="ImageUrl" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-md-4 text-center">
+                                <label class="form-label fw-bold d-block">Mevcut Fotoğraf</label>
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="@Model.FullName" class="rounded-circle shadow-sm border border-3 border-white" style="width: 120px; height: 120px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <img src="/img/trainers/default_coach.png" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover;" />
+                                }
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-camera-fill"></i> Fotoğrafı Değiştir (Opsiyonel)
+                                </label>
+                                <div class="input-group">
+                                    <input type="file" name="imageFile" class="form-control" accept="image/png, image/jpeg">
+                                </div>
+                                <div class="form-text text-muted small">
+                                    <i class="bi bi-info-circle"></i> Yeni resim seçmezseniz mevcut fotoğraf korunur.
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted" />
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="form-label fw-bold">
+                                    <i class="bi bi-person"></i> Ad Soyad
+                                </label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Expertise" class="form-label fw-bold">
+                                    <i class="bi bi-trophy"></i> Uzmanlık Alanı
+                                </label>
+                                <input asp-for="Expertise" class="form-control" />
+                                <span asp-validation-for="Expertise" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-bold">
+                                    <i class="bi bi-envelope"></i> E-Posta
+                                </label>
+                                <input asp-for="Email" class="form-control" type="email" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label fw-bold">
+                                    <i class="bi bi-telephone"></i> Telefon
+                                </label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Bio" class="form-label fw-bold">
+                                <i class="bi bi-file-text"></i> Biyografi
+                            </label>
+                            <textarea asp-for="Bio" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                <i class="bi bi-save-fill"></i> Değişiklikleri Kaydet
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary mt-2">
+                                <i class="bi bi-x-circle"></i> İptal ve Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Expertise" class="control-label"></label>
-                <input asp-for="Expertise" class="form-control" />
-                <span asp-validation-for="Expertise" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label class="control-label fw-bold">Profil Fotoğrafı</label>
-
-                @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                {
-                    <div class="mb-2">
-                        <img src="@Model.ImageUrl" width="100" class="img-thumbnail" />
-                        <span class="text-muted ms-2">Mevcut Resim</span>
-                    </div>
-                }
-
-                <input type="file" name="imageFile" class="form-control" accept="image/*" />
-                <span class="text-muted small">Değiştirmek istemiyorsanız boş bırakın.</span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Bio" class="control-label"></label>
-                <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Bio" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-3">
-                <input type="submit" value="Kaydet" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

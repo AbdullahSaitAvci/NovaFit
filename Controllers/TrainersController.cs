@@ -25,14 +25,24 @@ namespace NovaFit.Controllers
         // GET: Trainers
         public async Task<IActionResult> Index(string searchString)
         {
-            var trainers = from t in _context.Trainers
-                           select t;
+            // İlişkili tabloyu (TrainerSpecializations) dahil ediyoruz
+            var trainers = _context.Trainers
+                .Include(t => t.TrainerSpecializations)
+                .AsQueryable();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                // Eğitmenin uzmanlık alanında (Expertise) arama yapıyoruz
-                // Örn: Kullanıcı "Pilates" ararsa, uzmanlığında Pilates yazanlar gelir.
-                trainers = trainers.Where(s => s.Expertise.Contains(searchString));
+                // Arama terimini küçük harfe çevir (Büyük/Küçük harf duyarlılığını kaldırır)
+                string searchLower = searchString.ToLower();
+
+                // Filtreleme Mantığı:
+                trainers = trainers.Where(t =>
+                    // String kutusunda var mı? (Null değilse ve içeriyorsa)
+                    (t.Expertise != null && t.Expertise.ToLower().Contains(searchLower))
+                    ||
+                    // Veya tabloda (TrainerSpecializations) bu isimde bir uzmanlık var mı?
+                    t.TrainerSpecializations.Any(ts => ts.Name.ToLower().Contains(searchLower))
+                );
             }
 
             return View(await trainers.ToListAsync());

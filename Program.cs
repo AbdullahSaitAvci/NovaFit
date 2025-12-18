@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using NovaFit.Data;
 using NovaFit.Models;
 using NovaFit.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireNonAlphanumeric = false; // TODO: Canlıya geçerken burayı düzelt
     options.Password.RequiredLength = 3;
 
     // Kullanıcı ayarları
@@ -40,8 +41,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // MVC ve Razor Pages Servisleri 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        // Döngüye girdiğinde hata verme, döngüyü kes (IgnoreCycles)
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddRazorPages();
+
+// HuggingFace Servisini sisteme ekliyoruz
+builder.Services.AddHttpClient<NovaFit.Services.HuggingFaceService>();
 
 var app = builder.Build();
 

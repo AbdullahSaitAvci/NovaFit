@@ -1,0 +1,130 @@
+﻿@model IEnumerable<NovaFit.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary">
+                <i class="bi bi-journal-check"></i> Randevularım
+            </h2>
+            <p class="text-muted mb-0">Geçmiş ve gelecek antrenman programınız.</p>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-house-door-fill"></i> Anasayfa
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-0 text-center py-5">
+            <div class="card-body">
+                <div class="mb-3 text-muted">
+                    <i class="bi bi-calendar-x" style="font-size: 3rem;"></i>
+                </div>
+                <h4 class="card-title fw-bold">Henüz Randevunuz Yok</h4>
+                <p class="card-text text-muted">Hemen bir antrenör seçip spor yapmaya başlayın!</p>
+                <a asp-controller="Trainers" asp-action="Index" class="btn btn-primary btn-lg mt-2">
+                    <i class="bi bi-search"></i> Antrenör Bul
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow border-0 rounded-3 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="py-3">Tarih & Saat</th>
+                            <th class="py-3">Eğitmen</th>
+                            <th class="py-3">Hizmet / Ders</th>
+                            <th class="py-3">Durum</th>
+                            <th class="py-3">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            // İptal edilenleri biraz soluk gösterelim
+                            bool isCancelled = item.Status == NovaFit.Models.AppointmentStatus.Cancelled;
+                            string rowClass = isCancelled ? "bg-light text-muted" : "";
+
+                            <tr class="@rowClass">
+                                <td>
+                                    <div class="fw-bold">@item.StartTime.ToString("dd.MM.yyyy")</div>
+                                    <div class="small text-muted">
+                                        @item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        @if (!string.IsNullOrEmpty(item.Trainer?.ImageUrl))
+                                        {
+                                            <img src="@item.Trainer.ImageUrl" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit:cover;" />
+                                        }
+                                        <span class="fw-semibold">@(item.Trainer?.FullName ?? "Silinmiş Profil")</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (item.FitnessService != null)
+                                    {
+                                        <span class="badge bg-info text-dark">@item.FitnessService.ServiceName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Genel</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @switch (item.Status)
+                                    {
+                                        case NovaFit.Models.AppointmentStatus.Pending:
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Onay Bekliyor</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Confirmed:
+                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Onaylandı</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Cancelled:
+                                            <span class="badge bg-secondary"><i class="bi bi-x-circle-fill"></i> İptal Edildi</span>
+                                            break;
+                                        case NovaFit.Models.AppointmentStatus.Completed:
+                                            <span class="badge bg-primary"><i class="bi bi-trophy-fill"></i> Tamamlandı</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td>
+                                    @* Sadece Gelecek Tarihli ve İptal Edilmemiş Randevular İptal Edilebilir *@
+                                    @if (item.Status != NovaFit.Models.AppointmentStatus.Cancelled &&
+                                                                item.Status != NovaFit.Models.AppointmentStatus.Completed &&
+                                                                item.StartTime > DateTime.Now)
+                                    {
+                                        <form asp-controller="Member" asp-action="CancelAppointment" method="post">
+                                            <input type="hidden" name="id" value="@item.AppointmentId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger hover-shadow"
+                                                    onclick="return confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?');">
+                                                <i class="bi bi-x-lg"></i> İptal Et
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

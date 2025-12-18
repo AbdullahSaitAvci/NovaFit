@@ -27,7 +27,7 @@ namespace NovaFit.Models
 
         // Hangi Hizmet?
         [Display(Name = "Hizmet")]
-        public int FitnessServiceId { get; set; }
+        public int? FitnessServiceId { get; set; }
 
         [ForeignKey("FitnessServiceId")]
         public virtual FitnessService? FitnessService { get; set; }

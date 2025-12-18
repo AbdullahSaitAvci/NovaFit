@@ -1,0 +1,79 @@
+﻿@model NovaFit.Models.AiRequestDto
+@{
+    ViewData["Title"] = "AI Koç";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3><i class="bi bi-robot"></i> NovaFit AI Koç</h3>
+                    <p class="mb-0 text-white-50">Bilgilerini gir, yapay zeka sana özel programı ve hedefini analiz etsin.</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <form asp-action="GeneratePlan" method="post" onsubmit="document.getElementById('loadingDiv').style.display='block';">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Yaş</label>
+                                <input asp-for="Age" class="form-control" type="number" value="24" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Cinsiyet</label>
+                                <select asp-for="Gender" class="form-select">
+                                    <option>Erkek</option>
+                                    <option>Kadın</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Kilo (kg)</label>
+                                <input asp-for="Weight" class="form-control" type="number" value="75" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Boy (cm)</label>
+                                <input asp-for="Height" class="form-control" type="number" value="178" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Mevcut Seviye</label>
+                                <select asp-for="FitnessLevel" class="form-select">
+                                    <option>Hiç spor yapmadım (Başlangıç)</option>
+                                    <option>Ara sıra yapıyorum (Orta)</option>
+                                    <option>Düzenli yapıyorum (İleri)</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Hedefin Ne?</label>
+                                <select asp-for="Goal" class="form-select">
+                                    <option>Kilo Vermek / Yağ Yakmak</option>
+                                    <option>Kas Kütlesi Kazanmak (Hacim)</option>
+                                    <option>Sıkılaşmak ve Fit Görünmek</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Kendi Fotoğrafın (İsteğe Bağlı)</label>
+                                <input asp-for="UserImage" class="form-control" type="file" accept="image/*" />
+                                <div class="form-text text-muted">
+                                    Yüzünün net göründüğü bir fotoğraf yükle. Yapay zeka bunu referans alarak hedef vücudu oluşturacak.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                <i class="bi bi-magic"></i> Analiz Et ve Oluştur
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="loadingDiv" class="text-center mt-4" style="display:none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 fw-bold text-muted">Yapay zeka düşünüyor ve çiziyor... <br> (Bu işlem 20-30 saniye sürebilir)</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

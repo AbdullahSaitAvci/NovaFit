@@ -1,167 +1,331 @@
 ﻿@model NovaFit.Models.Trainer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Eğitmen Detayı";
 }
 
-<div class="container mt-4">
-    <h1>Eğitmen Detayı</h1>
-    <hr />
-    
-    <div class="row">
-        <div class="col-md-4 text-center">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <img src="@Model.ImageUrl" alt="@Model.FullName" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;" />
-            }
-            else
-            {
-                <img src="/img/trainers/default_coach.png" class="img-fluid rounded" alt="Varsayılan Resim" />
-            }
-        </div>
+<style>
+    :root {
+        --nova-yellow: #FFD200;
+        --nova-dark-bg: #242424;
+        --nova-dark-card: #1e1e1e;
+    }
 
-        <div class="col-md-8">
-            <dl class="row">
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FullName)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+    /* --- Genel Düzenlemeler --- */
+    .trainer-header-card {
+        background-color: var(--nova-dark-bg);
+        color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid #333;
+    }
 
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+    [data-bs-theme="light"] .trainer-header-card {
+        background-color: #fff;
+        color: #333;
+        border: 1px solid #e0e0e0;
+    }
 
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Phone)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone)</dd>
+    .trainer-image-large {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        object-position: top center;
+    }
 
-                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Bio)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Bio)</dd>
-            </dl>
+    .trainer-name-large {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--nova-yellow);
+        line-height: 1.2;
+    }
+
+    [data-bs-theme="light"] .trainer-name-large {
+        color: #333; /* Light modda isim koyu olsun */
+    }
+
+    .info-label {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        color: #888;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    /* --- Tablo Tasarımı --- */
+    .table-availability {
+        border-collapse: separate;
+        border-spacing: 0 10px; /* Satırlar arası boşluk */
+    }
+
+        .table-availability thead th {
+            background-color: transparent;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            border: none;
+            padding-bottom: 10px;
+        }
+
+        .table-availability tbody tr {
+            background-color: var(--nova-dark-card);
+            transition: transform 0.2s;
+        }
+
+    [data-bs-theme="light"] .table-availability tbody tr {
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .table-availability tbody tr:hover {
+        transform: translateY(-2px);
+    }
+
+    .table-availability td {
+        padding: 15px;
+        vertical-align: middle;
+        border: none;
+    }
+
+        .table-availability td:first-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .table-availability td:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+    /* --- Badge ve Butonlar --- */
+    .badge-service {
+        background-color: rgba(255, 210, 0, 0.15);
+        color: var(--nova-yellow);
+        border: 1px solid var(--nova-yellow);
+        font-weight: 600;
+    }
+
+    [data-bs-theme="light"] .badge-service {
+        color: #d63384;
+        border-color: #d63384;
+        background-color: rgba(214, 51, 132, 0.1);
+    }
+
+    .btn-action-primary {
+        background-color: var(--nova-yellow);
+        color: #000 !important;
+        font-weight: 700;
+        border-radius: 50px;
+        padding: 8px 20px;
+        text-transform: uppercase;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-action-primary:hover {
+            box-shadow: 0 0 15px rgba(255, 210, 0, 0.5);
+            transform: scale(1.05);
+        }
+</style>
+
+<div class="container py-5">
+
+    <div class="trainer-header-card shadow-lg mb-5">
+        <div class="row g-0">
+            <div class="col-md-5 col-lg-4">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.FullName" class="trainer-image-large" />
+                }
+                else
+                {
+                    <img src="/img/trainers/default_coach.png" class="trainer-image-large" style="background-color: #ccc;" />
+                }
+            </div>
+            <div class="col-md-7 col-lg-8 p-4 p-lg-5 d-flex flex-column justify-content-center">
+                <div class="mb-3">
+                    <span class="badge fw-bold px-3 py-2 rounded-pill text-wrap text-start"
+                          style="background-color: var(--nova-yellow); color: #000; font-size: 0.9rem; line-height: 1.4; border: 1px solid #e0b800;">
+                        <i class="bi bi-award-fill me-2"></i>@Model.Expertise
+                    </span>
+                </div>
+
+                <h1 class="trainer-name-large mb-4">@Model.FullName</h1>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-label"><i class="bi bi-envelope me-1"></i> E-POSTA</div>
+                        <div class="info-value">@Model.Email</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label"><i class="bi bi-telephone me-1"></i> TELEFON</div>
+                        <div class="info-value">@Model.Phone</div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="info-label"><i class="bi bi-file-text me-1"></i> HAKKINDA</div>
+                    <p class="text-muted" style="line-height: 1.6;">
+                        @(string.IsNullOrEmpty(Model.Bio) ? "Bu eğitmen için henüz biyografi eklenmemiş." : Model.Bio)
+                    </p>
+                </div>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="mt-auto pt-3 border-top border-secondary">
+                        <a asp-action="Edit" asp-route-id="@Model.TrainerId" class="btn btn-sm btn-outline-warning rounded-pill px-3 me-2">
+                            <i class="bi bi-pencil-square"></i> Düzenle
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.TrainerId" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                            <i class="bi bi-trash"></i> Sil
+                        </a>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 
-    <div class="mt-5">
-        <h3 class="text-primary border-bottom pb-2">
-            <i class="bi bi-calendar-week"></i> @Model.FullName - Müsaitlik Durumu
+    <div class="d-flex align-items-center mb-4">
+        <h3 class="fw-bold m-0" style="font-family: 'Oswald', sans-serif; text-transform: uppercase;">
+            <i class="bi bi-calendar-week text-warning me-2"></i> MÜSAİTLİK DURUMU
         </h3>
+        <div class="ms-3 flex-grow-1 border-bottom border-secondary opacity-25"></div>
+    </div>
 
-        @if (Model.TrainerAvailabilities != null && Model.TrainerAvailabilities.Any())
-        {
-            <div class="table-responsive mt-3">
-                <table class="table table-hover table-bordered text-center align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Başlangıç</th>
-                            <th>Bitiş</th>
-                            <th>Ders Tipi</th>
-                            <th>Durum</th>
-                            <th>İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TrainerAvailabilities.OrderBy(x => x.Date).ThenBy(x => x.StartTime))
-                        {
-                            // --- MANTIK HESAPLAMA KISMI (Kodun kısaldığı yer burası) ---
-                            // Veritabanından gelen randevu sayısını alıyoruz
-                            int doluKoltuk = item.Appointments?.Count ?? 0;
-                            // Kapasiteden çıkarıp kalanı buluyoruz
-                            int kalanKapasite = item.Capacity - doluKoltuk;
-                            // Yer kaldı mı kontrolü
-                            bool tamDolu = kalanKapasite <= 0;
+    @if (Model.TrainerAvailabilities != null && Model.TrainerAvailabilities.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-availability text-center align-middle">
+                <thead>
+                    <tr>
+                        <th>TARİH</th>
+                        <th>SAAT ARALIĞI</th>
+                        <th>DERS TİPİ</th>
+                        <th>KONTENJAN</th>
+                        <th>İŞLEM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.TrainerAvailabilities.OrderBy(x => x.Date).ThenBy(x => x.StartTime))
+                    {
+                        // --- MANTIK HESAPLAMA (AYNEN KORUNDU) ---
+                        int doluKoltuk = item.Appointments?.Count ?? 0;
+                        int kalanKapasite = item.Capacity - doluKoltuk;
+                        bool tamDolu = kalanKapasite <= 0;
 
-                            <tr class="@(tamDolu ? "table-secondary" : "")">
-                                
-                                <td>@item.Date.ToShortDateString()</td>
-                                <td>@item.StartTime.ToString(@"hh\:mm")</td>
-                                <td>@item.EndTime.ToString(@"hh\:mm")</td>
-                                
-                                <td>
-                                    @if(item.FitnessService != null)
+                        <tr style="@(tamDolu ? "opacity: 0.6;" : "")">
+
+                            <td class="fw-bold">
+                                @item.Date.ToString("dd.MM.yyyy") <br />
+                                <span class="small text-muted fw-normal">@item.Date.ToString("dddd", new System.Globalization.CultureInfo("tr-TR"))</span>
+                            </td>
+
+                            <td>
+                                <div class="d-inline-block px-3 py-1 rounded bg-dark bg-opacity-10 fw-bold border">
+                                    @item.StartTime.ToString(@"hh\:mm") - @item.EndTime.ToString(@"hh\:mm")
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (item.FitnessService != null)
+                                {
+                                    <span class="badge badge-service px-3 py-2 rounded-pill">
+                                        @item.FitnessService.ServiceName
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Genel / Bireysel</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (tamDolu)
+                                {
+                                    <span class="badge bg-danger px-3 py-2">DOLU</span>
+                                }
+                                else
+                                {
+                                    if (item.Capacity > 1)
                                     {
-                                        <span class="badge bg-info text-dark">@item.FitnessService.ServiceName</span>
+                                        <span class="text-success fw-bold">
+                                            <i class="bi bi-person-check-fill"></i> @kalanKapasite Yer Kaldı
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">Genel</span>
+                                        <span class="text-success fw-bold">
+                                            <i class="bi bi-check-circle-fill"></i> MÜSAİT
+                                        </span>
                                     }
-                                </td>
+                                }
+                            </td>
 
-                                <td>
-                                    @if (tamDolu)
-                                    {
-                                        <span class="badge bg-danger">TAMAMEN DOLU</span>
-                                    }
-                                    else
-                                    {
-                                        if(item.Capacity > 1)
-                                        {
-                                            <span class="badge bg-success">@kalanKapasite Kişilik Yer Var</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-success">Müsait</span>
-                                        }
-                                    }
-                                </td>
-
-                                <td>
-                                    @if (tamDolu)
-                                    {
-                                         <button class="btn btn-sm btn-secondary" disabled>Dolu</button>
-                                    }
-                                    else
-                                    {
-                                     // 1. ÖNCE YÖNETİCİLERİ KONTROL ET VE ENGELLE
-                                    // Eğer kullanıcı Admin veya Trainer ise, Member olsa bile buraya takılır.
+                            <td>
+                                @if (tamDolu)
+                                {
+                                    <button class="btn btn-sm btn-secondary rounded-pill px-4" disabled>DOLU</button>
+                                }
+                                else
+                                {
+                                    // 1. Yönetici ise Randevu Alamaz
                                     if (User.IsInRole("Admin") || User.IsInRole("Trainer"))
                                     {
-                                         <span class="badge bg-secondary">Yönetici İşlemi Yok</span>
+                                        <span class="text-muted small" title="Yöneticiler kendilerine randevu alamaz">
+                                            <i class="bi bi-lock-fill"></i> Yönetici
+                                        </span>
                                     }
-                                    // 2. YÖNETİCİ DEĞİLSE VE ÜYE İSE İZİN VER
+                                    // 2. Üye ise Alabilir
                                     else if (User.Identity.IsAuthenticated && User.IsInRole("Member"))
                                     {
-                                     <form asp-action="RandevuAl" asp-controller="Trainers" method="post">
-                
-                                     <input type="hidden" name="id" value="@item.TrainerAvailabilityId" />
-                                     <input type="hidden" name="serviceId" value="@(item.FitnessServiceId ?? 1)" />
-
-                                    <button type="submit" class="btn btn-sm btn-primary">
-                                    Randevu Al
-                                    </button>
-                                    </form>
+                                        <form asp-action="RandevuAl" asp-controller="Trainers" method="post">
+                                            <input type="hidden" name="id" value="@item.TrainerAvailabilityId" />
+                                            <input type="hidden" name="serviceId" value="@(item.FitnessServiceId ?? 1)" />
+                                            <button type="submit" class="btn-action-primary">
+                                                RANDEVU AL
+                                            </button>
+                                        </form>
                                     }
-                                // 3. GİRİŞ YAPMAMIŞSA
+                                    // 3. Giriş Yapmamışsa Yönlendir
                                     else if (!User.Identity.IsAuthenticated)
                                     {
-                                    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-primary">
-                                    Giriş Yap
-                                    </a>
+                                        <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                            GİRİŞ YAP
+                                        </a>
                                     }
-                                    // 4. DİĞER DURUMLAR
                                     else
                                     {
-                                    <span class="text-muted small">Yetkisiz</span>
+                                        <span class="text-muted">-</span>
                                     }
-                            }
-                                </td>
-                               
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-warning mt-3">
-                <i class="bi bi-info-circle"></i> Bu antrenör için henüz uygun saat eklenmemiştir.
-            </div>
-        }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary text-center py-5 rounded-3">
+            <i class="bi bi-calendar-x display-4 mb-3 d-block text-muted"></i>
+            <h4 class="text-muted">Henüz Müsaitlik Eklenmemiş</h4>
+            <p class="mb-0">Bu eğitmen için şu an açık bir ders saati bulunmuyor.</p>
+        </div>
+    }
+
+    <div class="mt-5 text-center">
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">
+            <i class="bi bi-arrow-left me-2"></i> Eğitmen Listesine Dön
+        </a>
     </div>
 
-    <div class="mt-3 mb-5">
-        @if (User.IsInRole("Admin")) 
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.TrainerId" class="btn btn-warning">Düzenle</a> <span>|</span>
-        }
-        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
-    </div>
 </div>

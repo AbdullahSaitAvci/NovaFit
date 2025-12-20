@@ -5,54 +5,138 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="col-md-5">
-        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-            <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #1e1e24 0%, #2b2b35 100%);">
-                <h2 class="fw-bold text-white mb-0">NovaFit</h2>
-                <span class="text-white-50">Yeni Hesap Oluştur</span>
+<style>
+    /* NovaFit Renk Paleti */
+    :root {
+        --nova-yellow: #FFD200;
+        --nova-green: #28a745; /* Kayıt butonu için yeşil tonu */
+    }
+
+    /* Kayıt Kartı */
+    .register-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+
+    /* Kart Başlığı */
+    .register-header {
+        background: linear-gradient(135deg, #1e1e24 0%, #2b2b35 100%);
+        padding: 2rem;
+        text-align: center;
+        border-bottom: 3px solid var(--nova-green);
+    }
+
+    /* Kart Gövdesi (Tema Uyumlu) */
+    .register-body {
+        padding: 2.5rem;
+    }
+
+    /* Input Alanları */
+    .form-floating > .form-control {
+        border-radius: 0.5rem;
+        border: 1px solid rgba(128,128,128,0.3);
+    }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--nova-green);
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        }
+
+    /* Kayıt Butonu */
+    .btn-nova-register {
+        background-color: var(--nova-green);
+        color: #fff;
+        font-weight: 700;
+        text-transform: uppercase;
+        border: none;
+        transition: transform 0.2s;
+    }
+
+        .btn-nova-register:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+    /* Linkler */
+    .link-nova {
+        color: var(--nova-yellow);
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    [data-bs-theme="light"] .link-nova {
+        color: #0d6efd; /* Light modda mavi */
+    }
+
+    .link-nova:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center py-5" style="min-height: 80vh;">
+    <div class="col-md-6 col-lg-5">
+
+        <div class="register-card bg-body-tertiary">
+
+            <div class="register-header">
+                <h2 class="fw-bold text-white m-0" style="font-family: 'Oswald', sans-serif; letter-spacing: 1px;">
+                    NOVA<span style="color: var(--nova-yellow);">FIT</span>
+                </h2>
+                <span class="text-white-50 small text-uppercase fw-bold">Yeni Hesap Oluştur</span>
             </div>
-            <div class="card-body p-5" style="background-color: var(--ana-arkaplan);">
+
+            <div class="register-body">
                 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center" role="alert"></div>
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger text-center small rounded-3 mb-4" role="alert"></div>
 
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.FullName" class="form-control rounded-3" placeholder="Ad Soyad" />
+                        <input asp-for="Input.FullName" class="form-control bg-body-secondary" placeholder="Ad Soyad" />
                         <label asp-for="Input.FullName" class="text-muted">Ad Soyad</label>
-                        <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                        <span asp-validation-for="Input.FullName" class="text-danger small ms-1"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Email" class="form-control rounded-3" autocomplete="username" placeholder="name@example.com" />
+                        <input asp-for="Input.Email" class="form-control bg-body-secondary" autocomplete="username" placeholder="name@example.com" />
                         <label asp-for="Input.Email" class="text-muted">E-Posta Adresi</label>
-                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        <span asp-validation-for="Input.Email" class="text-danger small ms-1"></span>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Password" class="form-control rounded-3" autocomplete="new-password" placeholder="password" />
+                        <input asp-for="Input.Password" class="form-control bg-body-secondary" autocomplete="new-password" placeholder="password" />
                         <label asp-for="Input.Password" class="text-muted">Şifre</label>
-                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        <span asp-validation-for="Input.Password" class="text-danger small ms-1"></span>
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input asp-for="Input.ConfirmPassword" class="form-control rounded-3" autocomplete="new-password" placeholder="password" />
+                        <input asp-for="Input.ConfirmPassword" class="form-control bg-body-secondary" autocomplete="new-password" placeholder="password" />
                         <label asp-for="Input.ConfirmPassword" class="text-muted">Şifre (Tekrar)</label>
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small ms-1"></span>
                     </div>
 
-                    <div class="d-grid gap-2 mb-4">
-                        <button id="registerSubmit" type="submit" class="btn btn-success btn-lg rounded-3 fw-bold shadow-sm">Aramıza Katıl</button>
+                    <div class="d-grid mb-4">
+                        <button id="registerSubmit" type="submit" class="btn btn-nova-register btn-lg py-3 rounded-pill">
+                            ARAMIZA KATIL <i class="bi bi-person-plus-fill ms-2"></i>
+                        </button>
                     </div>
 
-                    <div class="text-center">
-                        <p class="mb-0">
-                            Zaten hesabın var mı?
-                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none fw-bold text-primary">Giriş Yap</a>
+                    <div class="text-center border-top pt-3">
+                        <p class="mb-0 text-muted small">
+                            Zaten hesabın var mı? <br>
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="link-nova">
+                                GİRİŞ YAP
+                            </a>
                         </p>
                     </div>
+
                 </form>
             </div>
-        </div>
+        </div>      
+
     </div>
 </div>
 

@@ -1,45 +1,265 @@
 ﻿@model NovaFit.Models.AiResponseViewModel
 @{
     ViewData["Title"] = "AI Analiz Sonucu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    /* 1. GLOBAL AYARLAR
+           Önceki koddaki 'body { background-color: #121212 !important }' satırını kaldırdık.
+           Böylece Aydınlık modda sitenin kendi beyaz rengi, Karanlık modda siyah rengi çalışacak.
+        */
+
+    /* NovaFit Sarısı (Her iki modda da aynı kalsın) */
+    .text-nova {
+        color: #ffc107 !important;
+    }
+
+    /* 2. KART TASARIMI (OTOMATİK RENK GEÇİŞİ) */
+    .card-custom {
+        /* Varsayılan (Aydınlık Mod) */
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        /* Başlık kısmı her zaman koyu olsun, şık duruyor */
+        background-color: #2c2c2c;
+        border-bottom: 3px solid #ffc107;
+        padding: 15px 20px;
+    }
+
+    /* 3. AI İÇERİK FORMATI (KRİTİK KISIM)
+           Yapay zekadan gelen yazıların rengini dinamik yapıyoruz.
+        */
+
+    /* Genel Metinler */
+    .ai-content {
+        color: inherit; /* Rengi kartın rengine göre otomatik ayarla */
+    }
+
+        /* Başlıklar (H1-H6) */
+        .ai-content h1, .ai-content h2, .ai-content h3, .ai-content h4 {
+            color: #d63384; /* Light modda dikkat çekici bir renk (NovaFit konseptine uygun) */
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        /* Kalın Yazılar (Öğün İsimleri vb.) */
+        .ai-content strong, .ai-content b {
+            font-weight: 800;
+            color: #000; /* Aydınlık modda siyah olsun */
+        }
+
+        /* Tablolar (Beslenme Programı) - AYDINLIK MOD İÇİN */
+        .ai-content table {
+            width: 100%;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa; /* Hafif gri zemin */
+            color: #212529; /* Koyu yazı */
+            border-collapse: collapse;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .ai-content th {
+            background-color: #e9ecef;
+            color: #000;
+            font-weight: bold;
+            padding: 12px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ced4da;
+        }
+
+        .ai-content td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Listeler */
+        .ai-content ul, .ai-content ol {
+            background-color: #f8f9fa;
+            padding: 15px 15px 15px 35px;
+            border-radius: 8px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .ai-content li {
+            margin-bottom: 8px;
+            color: #212529;
+        }
+
+    /* Resim Alanı */
+    .generated-img {
+        border: 3px solid #ffc107;
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+    }
+
+    /* Buton */
+    .btn-outline-nova {
+        color: #ffc107;
+        border: 2px solid #ffc107;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.3s;
+        background-color: #2c2c2c; /* Buton içi hep koyu kalsın okunması için */
+    }
+
+        .btn-outline-nova:hover {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+    /* #######################################################
+           4. DARK MODE (KARANLIK MOD) - BURASI KESİNLİKLE KORUNDU
+           Bootstrap'in 'data-bs-theme="dark"' özelliğini kullanıyoruz.
+           #######################################################
+        */
+    [data-bs-theme="dark"] body {
+        /* Eğer layout body'ye class atıyorsa burası çalışır */
+    }
+
+    /* Kapsayıcı dark moda geçtiğinde devreye girecek stiller */
+    [data-bs-theme="dark"] .card-custom {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+
+    [data-bs-theme="dark"] .ai-content h1,
+    [data-bs-theme="dark"] .ai-content h2,
+    [data-bs-theme="dark"] .ai-content h3,
+    [data-bs-theme="dark"] .ai-content h4 {
+        color: #ffc107; /* Başlıklar Dark Modda Sarı */
+    }
+
+    [data-bs-theme="dark"] .ai-content p {
+        color: #d1d1d1;
+    }
+
+    [data-bs-theme="dark"] .ai-content strong,
+    [data-bs-theme="dark"] .ai-content b {
+        color: #fff; /* Kalın yazılar Dark Modda Beyaz */
+    }
+
+    [data-bs-theme="dark"] .ai-content table {
+        background-color: #252525;
+        color: #e0e0e0;
+        border: none;
+    }
+
+    [data-bs-theme="dark"] .ai-content th {
+        background-color: #333;
+        color: #ffc107;
+        border-bottom: 2px solid #444;
+    }
+
+    [data-bs-theme="dark"] .ai-content td {
+        border-bottom: 1px solid #444;
+    }
+
+    [data-bs-theme="dark"] .ai-content ul,
+    [data-bs-theme="dark"] .ai-content ol {
+        background-color: #252525;
+        border-left: 3px solid #ffc107;
+    }
+
+    [data-bs-theme="dark"] .ai-content li {
+        color: #fff;
+    }
+
+    /* Eğer data-bs-theme kullanılmıyorsa body'nin sınıfına göre fallback */
+    .dark-mode .card-custom {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+    }
+
+    .dark-mode .ai-content strong {
+        color: #fff;
+    }
+
+    .dark-mode .ai-content table {
+        background-color: #252525;
+        color: #e0e0e0;
+    }
+</style>
+
 <div class="container py-5">
+
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="fw-bold text-uppercase display-6 me-3" style="font-family: 'Oswald', sans-serif;">
+            <i class="bi bi-cpu text-nova"></i> ANALİZ <span class="text-nova">SONUCU</span>
+        </h2>
+        <div class="bg-secondary opacity-25 flex-grow-1" style="height: 1px;"></div>
+    </div>
+
     <div class="row">
         <div class="col-lg-7 mb-4">
-            <div class="card shadow border-0 h-100">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0"><i class="bi bi-list-check"></i> Sana Özel Tavsiyeler</h4>
+            <div class="card card-custom h-100">
+                <div class="card-header-custom d-flex align-items-center">
+                    <i class="bi bi-list-check fs-4 text-nova me-2"></i>
+                    <h4 class="mb-0 text-white text-uppercase fw-bold">SANA ÖZEL TAVSİYELER</h4>
                 </div>
-                <div class="card-body bg-light">
-                    <div class="p-3">
-                        @Html.Raw(Model.DietPlan)
-                    </div>
+
+                <div class="card-body p-4" style="min-height: 300px;">
+                    @if (string.IsNullOrEmpty(Model.DietPlan))
+                    {
+                        <div class="alert alert-secondary bg-dark text-warning border-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Sonuç hazırlanıyor veya boş döndü. Lütfen tekrar deneyin.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="ai-content">
+                            @Html.Raw(Model.DietPlan)
+                        </div>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="col-lg-5 mb-4">
-            <div class="card shadow border-0 sticky-top" style="top: 20px;">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="bi bi-image"></i> Hedeflediğimiz Sen</h4>
+            <div class="card card-custom sticky-top" style="top: 20px;">
+                <div class="card-header-custom d-flex align-items-center">
+                    <i class="bi bi-images fs-4 text-nova me-2"></i>
+                    <h4 class="mb-0 text-white text-uppercase fw-bold">HEDEFLEDİĞİMİZ SEN</h4>
                 </div>
+
                 <div class="card-body text-center p-4">
                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                     {
-                        <img src="@Model.ImageUrl" class="img-fluid rounded shadow-lg border border-3 border-white" alt="AI Generated Fitness Goal" />
-                        <p class="mt-3 text-muted small fst-italic">
-                            *Bu görsel, yapay zeka tarafından senin fiziksel özelliklerine ve hedeflerine göre üretilmiştir.
+                        <div class="position-relative">
+                            <img src="@Model.ImageUrl" class="img-fluid rounded generated-img" alt="AI Generated Fitness Goal" />
+                            <div class="mt-3">
+                                <span class="badge bg-warning text-dark fw-bold">
+                                    <i class="bi bi-stars"></i> AI TARAFINDAN OLUŞTURULDU
+                                </span>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-secondary small fst-italic">
+                            *Bu görsel, fiziksel özelliklerin ve hedeflerin baz alınarak yapay zeka tarafından simüle edilmiştir.
                         </p>
                     }
                     else
                     {
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i> Resim oluşturulamadı. Servis yoğun olabilir.
+                        <div class="alert alert-secondary bg-dark text-white border-0 py-5">
+                            <i class="bi bi-image-alt display-4 mb-3 d-block text-secondary"></i>
+                            Görsel oluşturulamadı.
                         </div>
                     }
                 </div>
-                <div class="card-footer bg-white border-0">
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Yeni Analiz Yap</a>
+
+                <div class="card-footer border-top border-secondary bg-transparent p-3">
+                    <a asp-action="Index" class="btn btn-outline-nova w-100 py-2 rounded-pill">
+                        <i class="bi bi-arrow-repeat me-2"></i> YENİ ANALİZ YAP
+                    </a>
                 </div>
             </div>
         </div>

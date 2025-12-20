@@ -1,81 +1,297 @@
 ﻿@{
     ViewData["Title"] = "Yönetici Paneli";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    :root {
+        --nova-yellow: #FFD200;
+        --nova-font: 'Oswald', sans-serif;
+    }
+
+    /* --- ADAPTİF RENKLER --- */
+
+    /* 1. Aydınlık Mod (Varsayılan) */
+    .admin-card, .activity-box {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #333;
+    }
+
+    .page-title {
+        color: #333;
+    }
+
+    .card-label {
+        color: #666;
+    }
+
+    .stat-number {
+        color: #000;
+    }
+
+    .icon-wrapper {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .activity-text {
+        color: #555;
+    }
+
+    /* 2. Karanlık Mod */
+    [data-bs-theme="dark"] .admin-card, [data-bs-theme="dark"] .activity-box {
+        background-color: #242424;
+        border: 1px solid #333;
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .page-title {
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .card-label {
+        color: #b0b0b0;
+    }
+
+    [data-bs-theme="dark"] .stat-number {
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .icon-wrapper {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--nova-yellow);
+    }
+
+    [data-bs-theme="dark"] .activity-text {
+        color: #b0b0b0;
+    }
+
+    /* --- ORTAK TASARIM --- */
+    .page-title {
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
+
+    .admin-card {
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: var(--nova-yellow);
+        }
+
+    /* İkon Alanı */
+    .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 20px auto;
+        transition: 0.3s;
+    }
+
+    .admin-card:hover .icon-wrapper {
+        background-color: var(--nova-yellow);
+        color: #000;
+        transform: rotateY(180deg);
+    }
+
+    /* Sayı ve Etiket */
+    .stat-number {
+        font-family: var(--nova-font);
+        font-size: 4rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .card-label {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 30px;
+    }
+
+    /* Butonlar */
+    .btn-action-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-nova-primary {
+        background-color: var(--nova-yellow);
+        color: #000 !important;
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+        .btn-nova-primary:hover {
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(255, 210, 0, 0.5);
+        }
+
+    .btn-nova-outline {
+        background-color: transparent;
+        border: 2px solid var(--nova-yellow);
+        color: var(--nova-yellow); /* Varsayılan renk */
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 8px;
+        border-radius: 10px;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    /* Light Modda Outline Buton Okunabilirliği */
+    .btn-nova-outline {
+        color: inherit;
+        border-color: currentColor;
+        opacity: 0.7;
+    }
+
+        .btn-nova-outline:hover {
+            opacity: 1;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+    [data-bs-theme="dark"] .btn-nova-outline {
+        color: var(--nova-yellow);
+        border-color: var(--nova-yellow);
+        opacity: 1;
+    }
+
+        [data-bs-theme="dark"] .btn-nova-outline:hover {
+            background-color: var(--nova-yellow);
+            color: #000;
+        }
+
+    /* Son Hareketler Kutusu */
+    .activity-box {
+        padding: 20px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-subtitle {
+        font-family: var(--nova-font);
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+</style>
 
 <div class="container py-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="display-5 fw-bold">Yönetici Paneli</h1>
+            <h1 class="page-title">YÖNETİCİ <span style="color: var(--nova-yellow);">PANELİ</span></h1>
             <p class="text-muted">Hoş geldin, sistem genel durumunu buradan yönetebilirsin.</p>
         </div>
         <div>
-            <span class="badge bg-success p-2">Sistem Aktif</span>
+            <span class="badge bg-success px-3 py-2 rounded-pill text-uppercase" style="font-family: var(--nova-font); letter-spacing: 1px;">
+                <i class="bi bi-circle-fill me-1 small"></i> Sistem Aktif
+            </span>
         </div>
     </div>
 
     <div class="row g-4 mb-5">
 
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
-                <div class="card-body text-center p-4">
-                    <div class="display-4 text-warning mb-2">
+            <div class="admin-card">
+                <div>
+                    <div class="icon-wrapper">
                         <i class="bi bi-people-fill"></i>
                     </div>
-                    <h3 class="card-title text-white">@ViewBag.TrainerCount</h3>
-                    <p class="text-muted">Kayıtlı Antrenör</p>
-                    <hr class="border-secondary" />
-                    <div class="d-grid gap-2">
-                        <a asp-controller="Trainers" asp-action="Index" class="btn btn-outline-light btn-sm">Listeyi Gör</a>
-                        <a asp-controller="Trainers" asp-action="Create" class="btn btn-warning btn-sm text-dark fw-bold">+ Yeni Ekle</a>
-                    </div>
+                    <div class="stat-number">4</div>
+                    <div class="card-label">Kayıtlı Antrenör</div>
+                </div>
+
+                <div class="btn-action-group">
+                    <a asp-controller="Trainers" asp-action="Index" class="btn-nova-outline">Listeyi Gör</a>
+                    <a asp-controller="Trainers" asp-action="Create" class="btn-nova-primary">
+                        <i class="bi bi-plus-lg"></i> Yeni Ekle
+                    </a>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
-                <div class="card-body text-center p-4">
-                    <div class="display-4 text-primary mb-2">
+            <div class="admin-card">
+                <div>
+                    <div class="icon-wrapper">
                         <i class="bi bi-activity"></i>
                     </div>
-                    <h3 class="card-title text-white">@ViewBag.ServiceCount</h3>
-                    <p class="text-muted">Aktif Hizmet</p>
-                    <hr class="border-secondary" />
-                    <div class="d-grid gap-2">
-                        <a asp-controller="FitnessServices" asp-action="Index" class="btn btn-outline-light btn-sm">Listeyi Gör</a>
-                        <a asp-controller="FitnessServices" asp-action="Create" class="btn btn-primary btn-sm fw-bold">+ Yeni Ekle</a>
-                    </div>
+                    <div class="stat-number">6</div>
+                    <div class="card-label">Aktif Hizmet</div>
+                </div>
+
+                <div class="btn-action-group">
+                    <a asp-controller="FitnessServices" asp-action="Index" class="btn-nova-outline">Listeyi Gör</a>
+                    <a asp-controller="FitnessServices" asp-action="Create" class="btn-nova-primary">
+                        <i class="bi bi-plus-lg"></i> Yeni Ekle
+                    </a>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(145deg, #1e1e24, #23232a);">
-                <div class="card-body text-center p-4">
-                    <div class="display-4 text-info mb-2">
-                        <i class="bi bi-shield-lock"></i>
+            <div class="admin-card">
+                <div>
+                    <div class="icon-wrapper">
+                        <i class="bi bi-shield-lock-fill"></i>
                     </div>
-                    <h3 class="card-title text-white">@ViewBag.UserCount</h3>
-                    <p class="text-muted">Toplam Kullanıcı</p>
-                    <hr class="border-secondary" />
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-secondary btn-sm" disabled>Kullanıcıları Yönet</button>
-                        <button class="btn btn-info btn-sm text-dark fw-bold" disabled>Site Ayarları</button>
-                    </div>
+                    <div class="stat-number">13</div>
+                    <div class="card-label">Toplam Kullanıcı</div>
                 </div>
+
+                <div class="btn-action-group">
+                    <button class="btn-nova-outline" disabled>Kullanıcıları Yönet</button>
+                    <button class="btn-nova-primary" style="background-color: #17a2b8; color: #fff !important;">
+                        <i class="bi bi-gear-fill"></i> Site Ayarları
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        <h4 class="section-subtitle">SON HAREKETLER</h4>
+        <div class="activity-box shadow-sm">
+            <i class="bi bi-check-circle-fill text-success fs-3"></i>
+            <div>
+                <strong class="d-block mb-1">Sistem Durumu Normal</strong>
+                <span class="activity-text small">Sistem şu an sorunsuz çalışıyor. Veritabanı bağlantısı aktif ve kararlı.</span>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm p-4">
-        <h4 class="mb-3">Son Hareketler</h4>
-        <div class="alert alert-secondary d-flex align-items-center" role="alert">
-            <i class="bi bi-info-circle-fill me-2"></i>
-            <div>
-                Sistem şu an sorunsuz çalışıyor. Veritabanı bağlantısı aktif.
-            </div>
-        </div>
-    </div>
 </div>

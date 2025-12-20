@@ -6,15 +6,13 @@ namespace NovaFit.Controllers
 {
     public class AiCoachController : Controller
     {
-        private readonly HuggingFaceService _aiService;
+        private readonly GeminiService _geminiService;
 
-        // HuggingFaceService buraya enjekte ediliyor
-        public AiCoachController(HuggingFaceService aiService)
+        public AiCoachController(GeminiService geminiService)
         {
-            _aiService = aiService;
+            _geminiService = geminiService;
         }
 
-        // Form Sayfası
         public IActionResult Index()
         {
             return View();
@@ -23,49 +21,82 @@ namespace NovaFit.Controllers
         [HttpPost]
         public async Task<IActionResult> GeneratePlan(AiRequestDto model)
         {
-            // 1. Metin Tavsiyesi (Prompt aynı)
-            string textPrompt = $"{model.Age} yaş, {model.Weight} kg, {model.Height} cm, {model.Gender}. " +
-                                $"Hedef: {model.Goal}. Diyet ve antrenman yaz.";
+            // --- GEMINI 2.0 İÇİN DETAYLI PROMPT ---
+            string textPrompt = $@"
+                Sen dünya çapında uzman bir spor koçusun.
+                Danışan Bilgileri: {model.Age} yaş, {model.Weight}kg, {model.Height}cm, {model.Gender}.
+                Hedef: {model.Goal}. Seviye: {model.FitnessLevel}.
 
-            string planText = await _aiService.GetAdviceAsync(textPrompt);
+                Görevin: Bu kişi için 1 GÜNLÜK ÖRNEK BESLENME ve ANTRENMAN planı hazırla.
+                
+                KURALLAR:
+                1. Cevabı SADECE HTML kodu olarak ver. (Markdown, ```html veya ``` İŞARETLERİNİ KULLANMA).
+                2. Beslenme planını bir HTML TABLOSU (table class='table table-bordered table-sm') olarak hazırla.
+                3. Antrenman planını maddeler halinde (ul/li) hazırla.
+                4. Motive edici, emojili ve profesyonel bir dil kullan.
 
-            // 2. Resim İşleme
-            string imageUrl = null;
+                Aşağıdaki HTML Şablonunu doldurarak cevap ver:
+                
+                <div class='ai-result'>
+                   <h4 class='text-primary'><i class='bi bi-activity'></i> Vücut Analizi</h4>
+                   <p>...Kişiye özel kısa analiz ve BMI yorumu...</p>
+                   
+                   <h4 class='text-success mt-4'><i class='bi bi-egg-fried'></i> Örnek Beslenme Planı</h4>
+                   <table class='table table-bordered table-sm'>
+                       <thead class='table-light'><tr><th>Öğün</th><th>Öneri</th><th>Tahmini Kalori</th></tr></thead>
+                       <tbody>
+                           <tr><td><b>Kahvaltı</b></td><td>...detay...</td><td>...kcal...</td></tr>
+                           <tr><td><b>Öğle</b></td><td>...detay...</td><td>...kcal...</td></tr>
+                           <tr><td><b>Ara Öğün</b></td><td>...detay...</td><td>...kcal...</td></tr>
+                           <tr><td><b>Akşam</b></td><td>...detay...</td><td>...kcal...</td></tr>
+                       </tbody>
+                   </table>
 
-            // İngilizce Prompt
-            string genderEn = model.Gender == "Erkek" ? "man" : "woman";
-            string goalEn = model.Goal.Contains("Kas") ? "extremely muscular bodybuilder physique" : "very fit athletic slim physique";
-            string imagePrompt = $"A photo of a {genderEn} with {goalEn}, gym background, cinematic lighting, 8k";
+                   <h4 class='text-danger mt-4'><i class='bi bi-lightning-charge'></i> Antrenman Programı</h4>
+                   <ul class='list-group list-group-flush'>
+                       <li class='list-group-item'><b>Isınma:</b> ...</li>
+                       <li class='list-group-item'><b>Ana Set:</b> ...</li>
+                       <li class='list-group-item'><b>Soğuma:</b> ...</li>
+                   </ul>
+                   
+                   <div class='alert alert-info mt-3'>
+                        <i class='bi bi-info-circle'></i> <b>Koçun Notu:</b> ...Motive edici kapanış cümlesi...
+                   </div>
+                </div>
+            ";
+
+            string planText = "";
+            string imageUrl = "";
 
             try
             {
-                if (model.UserImage != null && model.UserImage.Length > 0)
-                {
-                    // A) Kullanıcı RESİM YÜKLEDİYSE -> Resimden Resim Üret (Img2Img)
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await model.UserImage.CopyToAsync(memoryStream);
-                        byte[] imageBytes = memoryStream.ToArray();
+                // Görsel Prompt (Rastgelelik içerir)
+                string[] actions = new[] { "drinking water", "resting on bench", "running on treadmill", "lifting dumbbells", "stretching" };
+                var rand = new Random();
+                string randomAction = actions[rand.Next(actions.Length)];
 
-                        // Servisteki yeni metodu çağırıyoruz
-                        imageUrl = await _aiService.GenerateImageWithRefAsync(imagePrompt, imageBytes);
-                    }
-                }
-                else
-                {
-                    // B) Resim Yüklemediyse -> Sıfırdan Çiz (Eski yöntem)
-                    // (Eski GenerateImageAsync metodunu kullanmaya devam edebilirsin)
-                    imageUrl = await _aiService.GenerateImageAsync(imagePrompt); // Serviste bu metodun durduğundan emin ol
-                }
+                string genderEn = model.Gender == "Erkek" ? "man" : "woman";
+                // İleri seviye seçerse kaslı, başlangıç seçerse fit olsun
+                string bodyType = model.FitnessLevel.Contains("İleri") ? "muscular bodybuilder" : "fit athletic";
+
+                string imagePrompt = $"A realistic photo of a {model.Age} year old {genderEn}, {bodyType}, wearing sportswear, {randomAction} in gym, cinematic lighting, 8k detailed";
+
+                // --- SERVİSLERİ ÇAĞIR ---
+
+                // 1. Gemini 2.0 (Metin - Tablolu)
+                planText = await _geminiService.AnalyzeAsync(textPrompt, null);
+
+                // 2. Pollinations (Resim)
+                imageUrl = _geminiService.GenerateGoalImage(imagePrompt);
             }
-            catch
+            catch (Exception ex)
             {
-                planText += "<br><br>(Not: Resim servisi yoğun olduğu için oluşturulamadı.)";
+                planText = "<div class='alert alert-danger'>Hata: " + ex.Message + "</div>";
             }
 
             var resultViewModel = new AiResponseViewModel
             {
-                DietPlan = planText.Replace("\n", "<br>"),
+                DietPlan = planText,
                 ImageUrl = imageUrl
             };
 

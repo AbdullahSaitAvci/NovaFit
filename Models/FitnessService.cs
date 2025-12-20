@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema; // decimal için gerekli olabilir
 
-
 namespace NovaFit.Models
 {
     public class FitnessService

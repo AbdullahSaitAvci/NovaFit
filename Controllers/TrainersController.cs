@@ -75,6 +75,9 @@ namespace NovaFit.Controllers
             if (slot == null) return NotFound();
 
             // 2. Kontenjan Kontrolü
+            // NOT: Yüksek trafikli sistemlerde burada "Race Condition" (Yarış Durumu) oluşabilir.
+            // İki kullanıcı aynı anda tıkladığında kapasite aşılabilir. 
+            // Profesyonel çözümde veritabanı Transaction'ı veya 'lock' mekanizması kullanılmalıdır.
             if (slot.Appointments.Count >= slot.Capacity)
             {
                 TempData["Error"] = "Bu dersin kontenjanı dolmuştur.";
@@ -144,10 +147,29 @@ namespace NovaFit.Controllers
             {
                 if (imageFile != null)
                 {
+                    // --- YENİ EKLENEN GÜVENLİK KONTROLÜ BAŞLANGICI ---
+                    // İzin verilen uzantıları tanımlıyoruz
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
+                    // Yüklenen dosyanın uzantısını alıp küçültüyoruz (Örn: .JPG -> .jpg)
+                    var extension = Path.GetExtension(imageFile.FileName).ToLower();
+
+                    // Listede var mı kontrolü
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        // Hata mesajı ekle
+                        ModelState.AddModelError("ImageUrl", "Geçersiz dosya formatı! Sadece resim (.jpg, .png, .jpeg) yükleyebilirsiniz.");
+                        // İşlemi durdur ve formu hata ile birlikte geri döndür
+                        return View(trainer);
+                    }
+                    // --- GÜVENLİK KONTROLÜ BİTİŞİ ---
+
                     string wwwRootPath = _hostEnvironment.WebRootPath;
                     string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
-                    string extension = Path.GetExtension(imageFile.FileName);
+
+                    // Dosya isminin sonuna tarih ekleyerek benzersiz yapıyoruz
                     fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+
                     string path = Path.Combine(wwwRootPath + "/img/trainers/", fileName);
 
                     using (var fileStream = new FileStream(path, FileMode.Create))
@@ -194,9 +216,21 @@ namespace NovaFit.Controllers
                 {
                     if (imageFile != null)
                     {
+                        // --- GÜVENLİK KONTROLÜ BAŞLANGICI ---
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(imageFile.FileName).ToLower();
+
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("ImageUrl", "Geçersiz dosya formatı! Sadece resim (.jpg, .png, .jpeg) yükleyebilirsiniz.");
+                            return View(trainer);
+                        }
+                        // --- GÜVENLİK KONTROLÜ BİTİŞİ ---
+
                         string wwwRootPath = _hostEnvironment.WebRootPath;
                         string fileName = Path.GetFileNameWithoutExtension(imageFile.FileName);
-                        string extension = Path.GetExtension(imageFile.FileName);
+
+                        // Benzersiz dosya adı oluşturma
                         fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
                         string path = Path.Combine(wwwRootPath + "/img/trainers/", fileName);
 
@@ -205,14 +239,19 @@ namespace NovaFit.Controllers
                             await imageFile.CopyToAsync(fileStream);
                         }
 
+                        // Eski resmi silme işlemi (Disk temizliği için önemli)
                         if (!string.IsNullOrEmpty(trainer.ImageUrl))
                         {
                             var oldPath = Path.Combine(wwwRootPath, trainer.ImageUrl.TrimStart('/'));
-                            if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                            if (System.IO.File.Exists(oldPath))
+                            {
+                                System.IO.File.Delete(oldPath);
+                            }
                         }
 
                         trainer.ImageUrl = "/img/trainers/" + fileName;
                     }
+
                     _context.Update(trainer);
                     await _context.SaveChangesAsync();
                 }

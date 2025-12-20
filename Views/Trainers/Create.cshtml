@@ -4,85 +4,241 @@
     ViewData["Title"] = "Yeni Antrenör Ekle";
 }
 
+<style>
+    :root {
+        --nova-yellow: #FFD200;
+        --nova-font: 'Oswald', sans-serif;
+    }
+
+    /* --- ADAPTİF RENKLER --- */
+
+    /* 1. Aydınlık Mod (Default) */
+    .form-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #333;
+    }
+
+    .form-header {
+        background-color: #f8f9fa;
+        color: #333;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-control, .form-select {
+        background-color: #fff;
+        color: #333;
+        border: 1px solid #ced4da;
+    }
+
+    .form-label {
+        color: #555;
+    }
+
+    .text-muted-custom {
+        color: #6c757d;
+    }
+
+    /* 2. Karanlık Mod */
+    [data-bs-theme="dark"] .form-card {
+        background-color: #242424;
+        border: 1px solid #333;
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .form-header {
+        background-color: #1a1a1a;
+        color: var(--nova-yellow);
+        border-bottom: 1px solid #333;
+    }
+
+    [data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select {
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        color: #fff;
+    }
+
+        [data-bs-theme="dark"] .form-control:focus {
+            border-color: var(--nova-yellow);
+            box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+        }
+
+    [data-bs-theme="dark"] .form-label {
+        color: #b0b0b0;
+    }
+
+    [data-bs-theme="dark"] .text-muted-custom {
+        color: #888;
+    }
+
+    /* --- ORTAK TASARIM --- */
+    .page-title {
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .form-card {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .form-header {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    /* Butonlar */
+    .btn-save {
+        background-color: var(--nova-yellow);
+        color: #000 !important;
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        transition: 0.3s;
+        width: 100%;
+        display: block;
+        letter-spacing: 1px;
+    }
+
+        .btn-save:hover {
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(255, 210, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+    .btn-back {
+        background-color: transparent;
+        border: 2px solid #6c757d;
+        color: #6c757d;
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 10px;
+        border-radius: 10px;
+        transition: 0.3s;
+        text-decoration: none;
+        width: 100%;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+        .btn-back:hover {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+    [data-bs-theme="dark"] .btn-back {
+        border-color: #444;
+        color: #888;
+    }
+
+        [data-bs-theme="dark"] .btn-back:hover {
+            background-color: #444;
+            color: #fff;
+        }
+
+</style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
 
-            <div class="card shadow-lg border-0 rounded-3">
+            <div class="form-card">
 
-                <div class="card-header bg-primary text-white py-3">
-                    <h3 class="card-title mb-0 text-center fw-bold">
-                        <i class="bi bi-person-plus-fill me-2"></i> Yeni Eğitmen Oluştur
+                <div class="form-header">
+                    <h3 class="page-title">
+                        <i class="bi bi-person-plus-fill me-2"></i> YENİ EĞİTMEN OLUŞTUR
                     </h3>
                 </div>
 
-                <div class="card-body p-4">
+                <div class="card-body p-4 p-md-5">
                     <form asp-action="Create" enctype="multipart/form-data">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
 
-                        <div class="row g-3 mb-3">
+                        <div class="row g-4 mb-4">
                             <div class="col-md-6">
-                                <label asp-for="FullName" class="form-label fw-bold">
-                                    <i class="bi bi-person"></i> Ad Soyad
-                                </label>
-                                <input asp-for="FullName" class="form-control form-control-lg" placeholder="Örn: Ahmet Yılmaz" />
+                                <label asp-for="FullName" class="form-label">AD SOYAD</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="bi bi-person"></i></span>
+                                    <input asp-for="FullName" class="form-control" placeholder="Örn: Ahmet Yılmaz" />
+                                </div>
                                 <span asp-validation-for="FullName" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Expertise" class="form-label fw-bold">
-                                    <i class="bi bi-trophy"></i> Uzmanlık Alanı
-                                </label>
-                                <input asp-for="Expertise" class="form-control form-control-lg" placeholder="Örn: Fitness, Pilates" />
+                                <label asp-for="Expertise" class="form-label">UZMANLIK ALANI</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="bi bi-trophy"></i></span>
+                                    <input asp-for="Expertise" class="form-control" placeholder="Örn: Fitness, Pilates" />
+                                </div>
                                 <span asp-validation-for="Expertise" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="row g-3 mb-3">
+                        <div class="row g-4 mb-4">
                             <div class="col-md-6">
-                                <label asp-for="Email" class="form-label fw-bold">
-                                    <i class="bi bi-envelope"></i> E-Posta
-                                </label>
-                                <input asp-for="Email" class="form-control" type="email" placeholder="ornek@novafit.com" />
+                                <label asp-for="Email" class="form-label">E-POSTA ADRESİ</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" type="email" placeholder="ornek@novafit.com" />
+                                </div>
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Phone" class="form-label fw-bold">
-                                    <i class="bi bi-telephone"></i> Telefon
-                                </label>
-                                <input asp-for="Phone" class="form-control" placeholder="0555 123 45 67" />
+                                <label asp-for="Phone" class="form-label">TELEFON NUMARASI</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent"><i class="bi bi-telephone"></i></span>
+                                    <input asp-for="Phone" class="form-control" placeholder="0555 123 45 67" />
+                                </div>
                                 <span asp-validation-for="Phone" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">
-                                <i class="bi bi-image"></i> Profil Fotoğrafı
-                            </label>
+                        <div class="mb-4">
+                            <label class="form-label">PROFİL FOTOĞRAFI</label>
                             <div class="input-group">
                                 <input type="file" name="imageFile" class="form-control" accept="image/png, image/jpeg" id="inputGroupFile02">
-                                <label class="input-group-text" for="inputGroupFile02">Yükle</label>
+                                <label class="input-group-text bg-secondary text-white" for="inputGroupFile02">YÜKLE</label>
                             </div>
-                            <div class="form-text text-muted">
-                                <i class="bi bi-info-circle"></i> Sadece .jpg veya .png formatında, net bir fotoğraf yükleyiniz.
+                            <div class="form-text text-muted-custom mt-2">
+                                <i class="bi bi-info-circle me-1"></i> Sadece .jpg veya .png formatında, net bir fotoğraf yükleyiniz.
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Bio" class="form-label fw-bold">
-                                <i class="bi bi-file-text"></i> Biyografi / Özgeçmiş
-                            </label>
-                            <textarea asp-for="Bio" class="form-control" rows="4" placeholder="Eğitmenin tecrübelerinden ve sertifikalarından bahsedin..."></textarea>
+                        <div class="mb-5">
+                            <label asp-for="Bio" class="form-label">BİYOGRAFİ / ÖZGEÇMİŞ</label>
+                            <textarea asp-for="Bio" class="form-control" rows="5" placeholder="Eğitmenin tecrübelerinden ve sertifikalarından bahsedin..."></textarea>
                             <span asp-validation-for="Bio" class="text-danger small"></span>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg shadow-sm hover-effect">
-                                <i class="bi bi-check-circle-fill"></i> Kaydet ve Yayınla
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-lg me-2"></i> KAYDET VE YAYINLA
                             </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary mt-2">
-                                <i class="bi bi-arrow-left"></i> Listeye Geri Dön
+                            <a asp-action="Index" class="btn-back">
+                                <i class="bi bi-arrow-left me-2"></i> LİSTEYE GERİ DÖN
                             </a>
                         </div>
 

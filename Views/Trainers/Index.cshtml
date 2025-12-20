@@ -1,66 +1,240 @@
 ﻿@model IEnumerable<NovaFit.Models.Trainer>
 
 @{
-    ViewData["Title"] = "Antrenörlerimiz"; 
+    ViewData["Title"] = "Antrenörlerimiz";
 }
 
-<div class="container py-4"> 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-6 fw-bold">Antrenör Kadromuz</h1>
+<style>
+    :root {
+        --nova-yellow: #FFD200;
+        --nova-font: 'Oswald', sans-serif;
+    }
+
+    /* --- ADAPTİF RENK AYARLARI --- */
+
+    /* 1. Varsayılan (Aydınlık Mod) */
+    .trainer-card {
+        background-color: #ffffff; /* Beyaz Kart */
+        border: 1px solid #e0e0e0;
+        color: #333; /* Siyah Yazı */
+    }
+
+    .page-title {
+        color: #333;
+    }
+    /* Başlık Siyah */
+    .trainer-specialty {
+        color: #555;
+    }
+
+    .trainer-bio {
+        color: #666;
+    }
+
+    /* 2. Karanlık Mod (Senin sevdiğin tasarım) */
+    [data-bs-theme="dark"] .trainer-card {
+        background-color: #242424; /* Lüks Koyu Gri */
+        border: 1px solid #333;
+        color: #fff; /* Beyaz Yazı */
+    }
+
+    [data-bs-theme="dark"] .page-title {
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .trainer-specialty {
+        color: #eee;
+    }
+
+    [data-bs-theme="dark"] .trainer-bio {
+        color: #b0b0b0;
+    }
+
+    /* --- ORTAK TASARIM --- */
+    .page-title {
+        font-family: var(--nova-font);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 3rem;
+        text-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .trainer-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .trainer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2); /* Gölgeyi yumuşattık */
+            border-color: var(--nova-yellow);
+        }
+
+    .trainer-img-wrapper {
+        height: 300px;
+        overflow: hidden;
+        position: relative;
+        background-color: #f0f0f0; /* Resim yoksa arkası gri olsun */
+    }
+
+    [data-bs-theme="dark"] .trainer-img-wrapper {
+        background-color: #1a1a1a;
+    }
+
+    .trainer-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        transition: transform 0.5s ease;
+        filter: grayscale(100%);
+    }
+
+    .trainer-card:hover .trainer-img {
+        transform: scale(1.1);
+        filter: grayscale(0%);
+    }
+
+    .card-body-custom {
+        padding: 25px;
+        text-align: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .trainer-name {
+        font-family: var(--nova-font);
+        font-size: 1.6rem;
+        color: var(--nova-yellow) !important; /* İsim hep sarı kalsın */
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .trainer-expertise {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+    }
+
+    .trainer-bio {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .btn-trainer-detail {
+        margin-top: auto;
+        background-color: transparent;
+        border: 2px solid var(--nova-yellow);
+        color: var(--nova-yellow) !important; /* Buton yazısı hep sarı */
+        font-family: var(--nova-font);
+        text-transform: uppercase;
+        padding: 8px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+        /* Hover olunca buton davranışı */
+        .btn-trainer-detail:hover {
+            background-color: var(--nova-yellow);
+            color: #000 !important; /* Hover olunca yazı siyah olsun */
+        }
+
+    /* Admin Butonları */
+    .admin-actions {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(128,128,128, 0.2);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-create-new {
+        background-color: var(--nova-yellow);
+        color: #000;
+        font-family: var(--nova-font);
+        text-transform: uppercase;
+        font-weight: 700;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 50px;
+        transition: 0.3s;
+    }
+
+        .btn-create-new:hover {
+            transform: scale(1.05);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="page-title m-0">ANTRENÖR <span style="color: var(--nova-yellow);">KADROSU</span></h1>
+            <p class="text-muted mt-2">Hedeflerine ulaşman için sana rehberlik edecek uzman kadromuz.</p>
+        </div>
+
         @if (User.IsInRole("Admin"))
         {
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Yeni Antrenör Ekle
+            <a asp-action="Create" class="btn btn-create-new mt-3 mt-md-0">
+                <i class="bi bi-plus-circle-fill me-2"></i> Yeni Ekle
             </a>
         }
     </div>
 
-    @if (!Model.Any()) // hiç antrenör yoksa
+    @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
-            Henüz kayıtlı antrenör bulunmamaktadır.
+        <div class="alert alert-secondary text-center p-5 rounded-4 border-0">
+            <i class="bi bi-info-circle display-4 mb-3"></i>
+            <h3>Henüz Antrenör Eklenmedi</h3>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row g-4">
             @foreach (var item in Model)
             {
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div style="height: 250px; overflow: hidden; background-color: #f8f9fa;">
-                            @if (!string.IsNullOrEmpty(item.ImageUrl))
-                            {
-                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/img/trainers/default_coach.png" : item.ImageUrl)"
-                                     class="card-img-top"
-                                     alt="@item.FullName"
-                                     style="height: 250px; object-fit: cover;"
-                                     onerror="this.onerror=null;this.src='/img/trainers/default_coach.png';" />
-                            }
-                            else
-                            {
-                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                                    <span class="fs-1">👤</span>
-                                </div>
-                            }
+                <div class="col-md-4 col-sm-6">
+                    <div class="trainer-card">
+                        <div class="trainer-img-wrapper">
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/img/trainers/default_coach.png" : item.ImageUrl)"
+                                 class="trainer-img"
+                                 alt="@item.FullName"
+                                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop';" />
                         </div>
-
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold text-primary">@item.FullName</h5>
-                            <p class="card-subtitle text-muted mb-2">@item.Expertise</p>
-                            <p class="card-text small text-secondary">
+                        <div class="card-body-custom">
+                            <h3 class="trainer-name">@item.FullName</h3>
+                            <div class="trainer-expertise">
+                                <i class="bi bi-award-fill me-1 text-warning"></i> @item.Expertise
+                            </div>
+                            <p class="trainer-bio">
                                 @(item.Bio?.Length > 100 ? item.Bio.Substring(0, 100) + "..." : item.Bio)
                             </p>
-                        </div>
-
-                        <div class="card-footer bg-white border-top-0 text-center pb-3">
-                            <a asp-action="Details" asp-route-id="@item.TrainerId" class="btn btn-outline-primary btn-sm rounded-pill px-3">Detaylar</a>
-
+                            <a asp-action="Details" asp-route-id="@item.TrainerId" class="btn-trainer-detail">
+                                DETAYLAR
+                            </a>
                             @if (User.IsInRole("Admin"))
                             {
-                                <div class="mt-2 pt-2 border-top">
-                                    <a asp-action="Edit" asp-route-id="@item.TrainerId" class="btn btn-warning btn-sm py-0" style="font-size: 0.8rem;">Düzenle</a>
-                                    <a asp-action="Delete" asp-route-id="@item.TrainerId" class="btn btn-danger btn-sm py-0" style="font-size: 0.8rem;">Sil</a>
+                                <div class="admin-actions">
+                                    <a asp-action="Edit" asp-route-id="@item.TrainerId" class="btn btn-sm btn-outline-warning rounded-pill px-3">DÜZENLE</a>
+                                    <a asp-action="Delete" asp-route-id="@item.TrainerId" class="btn btn-sm btn-outline-danger rounded-pill px-3">SİL</a>
                                 </div>
                             }
                         </div>

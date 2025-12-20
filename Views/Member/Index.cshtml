@@ -1,130 +1,218 @@
 ﻿@model IEnumerable<NovaFit.Models.Appointment>
+@using NovaFit.Models
 
 @{
     ViewData["Title"] = "Randevularım";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    /* Layout beyaz olsa bile bu sayfanın arka planını zorla koyu yap */
+    body {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    /* NovaFit/MacFit Sarısı */
+    .text-nova {
+        color: #ffc107 !important;
+    }
+
+    /* Tablo Tasarımı */
+    .table-custom {
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        overflow: hidden; /* Köşelerin yuvarlak kalması için */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .table-custom th {
+        background-color: #2c2c2c;
+        color: #ffc107; /* Başlıklar Sarı */
+        font-weight: 700;
+        text-transform: uppercase;
+        border: none;
+        padding: 15px;
+    }
+
+    .table-custom td {
+        background-color: #1e1e1e;
+        border-bottom: 1px solid #333;
+        vertical-align: middle;
+        padding: 15px;
+        color: #fff; /* İçerik Beyaz */
+    }
+
+    /* Hover (Üzerine gelince) */
+    .table-custom tbody tr:hover td {
+        background-color: #252525;
+        transition: 0.3s;
+    }
+
+    /* Profil Resmi */
+    .trainer-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid #ffc107;
+        object-fit: cover;
+    }
+
+    /* Hizmet Badge (Kutu) Stili */
+    .badge-service {
+        background-color: #333;
+        color: #0dcaf0; /* Açık mavi yazı */
+        border: 1px solid #0dcaf0;
+        padding: 8px 12px;
+        border-radius: 50px; /* Hap şeklinde */
+        font-weight: normal;
+    }
+
+    /* Tarih yazısını ZORLA beyaz yapar */
+    .text-white-force {
+        color: #ffffff !important;
+    }
+
+    /* Saat yazısını ZORLA açık gri yapar */
+    .text-gray-force {
+        color: #cccccc !important;
+    }
+</style>
 
 <div class="container py-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h2 class="fw-bold text-primary">
-                <i class="bi bi-journal-check"></i> Randevularım
+            <h2 class="fw-bold text-uppercase text-white display-6">
+                <i class="bi bi-calendar-check text-nova me-2"></i> RANDEVULARIM
             </h2>
-            <p class="text-muted mb-0">Geçmiş ve gelecek antrenman programınız.</p>
+            <p class="text-muted mb-0" style="font-size: 1.1rem;">
+                Antrenman programını buradan takip et.
+            </p>
         </div>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-house-door-fill"></i> Anasayfa
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left"></i> Ana Sayfa
         </a>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="card shadow-sm border-0 text-center py-5">
+        <div class="card bg-dark border-secondary text-center py-5 shadow">
             <div class="card-body">
-                <div class="mb-3 text-muted">
-                    <i class="bi bi-calendar-x" style="font-size: 3rem;"></i>
+                <div class="mb-3 text-nova opacity-50">
+                    <i class="bi bi-calendar-x" style="font-size: 4rem;"></i>
                 </div>
-                <h4 class="card-title fw-bold">Henüz Randevunuz Yok</h4>
-                <p class="card-text text-muted">Hemen bir antrenör seçip spor yapmaya başlayın!</p>
-                <a asp-controller="Trainers" asp-action="Index" class="btn btn-primary btn-lg mt-2">
-                    <i class="bi bi-search"></i> Antrenör Bul
+                <h3 class="card-title fw-bold text-white">HENÜZ RANDEVU YOK</h3>
+                <p class="text-muted">Hemen bir antrenör seçip spora başla!</p>
+                <a asp-controller="Trainers" asp-action="Index" class="btn btn-warning fw-bold px-5 rounded-pill mt-3">
+                    ANTRENÖR BUL
                 </a>
             </div>
         </div>
     }
     else
     {
-        <div class="card shadow border-0 rounded-3 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0 text-center">
-                    <thead class="bg-light text-secondary">
-                        <tr>
-                            <th class="py-3">Tarih & Saat</th>
-                            <th class="py-3">Eğitmen</th>
-                            <th class="py-3">Hizmet / Ders</th>
-                            <th class="py-3">Durum</th>
-                            <th class="py-3">İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            // İptal edilenleri biraz soluk gösterelim
-                            bool isCancelled = item.Status == NovaFit.Models.AppointmentStatus.Cancelled;
-                            string rowClass = isCancelled ? "bg-light text-muted" : "";
+        <div class="table-responsive">
+            <table class="table table-custom text-center mb-0">
+                <thead>
+                    <tr>
+                        <th>TARİH & SAAT</th>
+                        <th>EĞİTMEN</th>
+                        <th>HİZMET / PROGRAM</th>
+                        <th>DURUM</th>
+                        <th>İŞLEM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        // İptal edilenler biraz soluk olsun
+                        bool isCancelled = item.Status == AppointmentStatus.Cancelled;
+                        string opacityStyle = isCancelled ? "opacity: 0.5;" : "";
 
-                            <tr class="@rowClass">
-                                <td>
-                                    <div class="fw-bold">@item.StartTime.ToString("dd.MM.yyyy")</div>
-                                    <div class="small text-muted">
-                                        @item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")
-                                    </div>
-                                </td>
+                        <tr style="@opacityStyle">
 
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        @if (!string.IsNullOrEmpty(item.Trainer?.ImageUrl))
+                            <td class="text-start ps-4">
+                                <div class="h5 mb-1 fw-bold text-white-force text-nowrap">
+                                    @item.StartTime.ToString("dd.MM.yyyy")
+                                </div>
+
+                                <div class="small text-gray-force text-nowrap">
+                                    <i class="bi bi-clock me-1 text-warning"></i>
+                                    @item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    @if (item.Trainer != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty(item.Trainer.ImageUrl))
                                         {
-                                            <img src="@item.Trainer.ImageUrl" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit:cover;" />
+                                            <img src="@item.Trainer.ImageUrl" class="trainer-img me-3" />
                                         }
-                                        <span class="fw-semibold">@(item.Trainer?.FullName ?? "Silinmiş Profil")</span>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    @if (item.FitnessService != null)
-                                    {
-                                        <span class="badge bg-info text-dark">@item.FitnessService.ServiceName</span>
+                                        <span class="fw-bold text-white">@item.Trainer.FullName</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">Genel</span>
+                                        <span class="text-muted fst-italic">Silinmiş</span>
                                     }
-                                </td>
+                                </div>
+                            </td>
 
-                                <td>
-                                    @switch (item.Status)
-                                    {
-                                        case NovaFit.Models.AppointmentStatus.Pending:
-                                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Onay Bekliyor</span>
-                                            break;
-                                        case NovaFit.Models.AppointmentStatus.Confirmed:
-                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Onaylandı</span>
-                                            break;
-                                        case NovaFit.Models.AppointmentStatus.Cancelled:
-                                            <span class="badge bg-secondary"><i class="bi bi-x-circle-fill"></i> İptal Edildi</span>
-                                            break;
-                                        case NovaFit.Models.AppointmentStatus.Completed:
-                                            <span class="badge bg-primary"><i class="bi bi-trophy-fill"></i> Tamamlandı</span>
-                                            break;
-                                    }
-                                </td>
+                            <td>
+                                @if (item.FitnessService != null)
+                                {
+                                    <span class="badge-service">
+                                        @item.FitnessService.ServiceName
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Genel</span>
+                                }
+                            </td>
 
-                                <td>
-                                    @* Sadece Gelecek Tarihli ve İptal Edilmemiş Randevular İptal Edilebilir *@
-                                    @if (item.Status != NovaFit.Models.AppointmentStatus.Cancelled &&
-                                                                item.Status != NovaFit.Models.AppointmentStatus.Completed &&
-                                                                item.StartTime > DateTime.Now)
-                                    {
-                                        <form asp-controller="Member" asp-action="CancelAppointment" method="post">
-                                            <input type="hidden" name="id" value="@item.AppointmentId" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger hover-shadow"
-                                                    onclick="return confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?');">
-                                                <i class="bi bi-x-lg"></i> İptal Et
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted small">-</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case AppointmentStatus.Pending:
+                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-1">ONAY BEKLİYOR</span>
+                                        break;
+                                    case AppointmentStatus.Confirmed:
+                                        <span class="badge bg-success px-3 py-2 rounded-1">ONAYLANDI</span>
+                                        break;
+                                    case AppointmentStatus.Completed:
+                                        <span class="badge bg-primary px-3 py-2 rounded-1">TAMAMLANDI</span>
+                                        break;
+                                    case AppointmentStatus.Cancelled:
+                                        <span class="badge bg-danger px-3 py-2 rounded-1">İPTAL EDİLDİ</span>
+                                        break;
+                                }
+                            </td>
+
+                            <td>
+                                @if (item.Status != AppointmentStatus.Cancelled && 
+                                     item.Status != AppointmentStatus.Completed && 
+                                     item.StartTime > DateTime.Now)
+                                {
+                                    <form asp-controller="Member" asp-action="CancelAppointment" method="post">
+                                        <input type="hidden" name="id" value="@item.AppointmentId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                onclick="return confirm('İptal etmek istediğine emin misin?');">
+                                            İPTAL
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
 </div>

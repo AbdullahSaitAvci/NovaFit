@@ -15,14 +15,8 @@ namespace NovaFit.Data
         public DbSet<FitnessService> FitnessServices { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
 
-        // Yeni eklediğimiz tablo:
-        public DbSet<TrainerSpecialization> TrainerSpecializations { get; set; }
-
         public DbSet<TrainerAvailability> TrainerAvailabilities { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
-
-        // Eğer bu modelleri henüz oluşturmadıysan hata verebilir, oluşturduysan sorun yok:
-        public DbSet<MemberProfile> MemberProfiles { get; set; }
         public DbSet<AiRecommendation> AiRecommendations { get; set; }
 
         // İlişki Ayarlamaları
@@ -30,7 +24,7 @@ namespace NovaFit.Data
         {
             base.OnModelCreating(modelBuilder); // Identity için ŞART
 
-            // Appointment tablosu için hassasiyet ayarı (Bu kalsın, zararı yok)
+            // Appointment tablosu için hassasiyet ayarı 
             modelBuilder.Entity<Appointment>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");

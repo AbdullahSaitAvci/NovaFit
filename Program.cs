@@ -49,10 +49,8 @@ builder.Services.AddControllersWithViews()
     });
 builder.Services.AddRazorPages();
 
-// HuggingFace Servisini sisteme ekliyoruz
-builder.Services.AddHttpClient<NovaFit.Services.HuggingFaceService>();
-
-var app = builder.Build();
+// Gemini Servisini sisteme tanıtıyoruz
+builder.Services.AddHttpClient<NovaFit.Services.GeminiService>(); var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

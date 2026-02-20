@@ -103,8 +103,8 @@ namespace NovaFit.Services
             // 2. Sunucuyu yormayacak güvenli Seed
             int safeSeed = new Random().Next(1, 9999999);
 
-            // 3. /p/ DEĞİL, doğrudan resmi döndüren /prompt/ adresini kullanıyoruz!
-            return $"https://pollinations.ai/prompt/{encodedPrompt}?width=1024&height=1024&nologo=true&seed={safeSeed}";
+            // 3. YENİ VE RESMİ API ADRESİ: gen.pollinations.ai/image/ 
+            return $"https://gen.pollinations.ai/image/{encodedPrompt}?width=1024&height=1024&nologo=true&seed={safeSeed}";
         }
     }
 }

@@ -16,19 +16,19 @@ namespace NovaFit.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
-        // Eğer yanlışlıkla linke tıklayarak (GET) gelirlerse de çıkış yapsın (İsteğe bağlı, garanti olsun diye)
+        // EÄŸer yanlÄ±ÅŸlÄ±kla linke tÄ±klayarak (GET) gelirlerse de Ã§Ä±kÄ±ÅŸ yapsÄ±n (Ä°steÃ°e baÄŸlÄ±, garanti olsun diye)
         public async Task<IActionResult> OnGet()
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("Kullanıcı çıkış yaptı.");
+            _logger.LogInformation("KullanÃ½cÃ½ Ã§Ã½kÃ½Ã¾ yaptÃ½.");
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        // Asıl çalışan kısım burası (Butona basınca)
+        // AsÄ±l Ã§alÄ±ÅŸan kÄ±sÄ±m burasÄ± (Butona basÄ±nca)
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("Kullanıcı çıkış yaptı.");
+            _logger.LogInformation("KullanÃ½cÃ½ Ã§Ã½kÃ½Ã¾ yaptÃ½.");
 
             if (returnUrl != null)
             {

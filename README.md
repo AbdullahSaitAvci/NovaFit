@@ -54,8 +54,8 @@ Bu proje, dönem ödevi isterlerinin **tamamını** karşılamaktadır:
 
 ### 🔑 Varsayılan Yönetici (Admin) Hesabı
 Veritabanı oluşturulduğunda otomatik olarak tanımlanan yönetici hesabı:
-* **E-Posta:** `g231210035@sakarya.edu.tr`
-* **Şifre:** `sau`
+* **E-Posta:** ``
+* **Şifre:** ``
 
 ---
 

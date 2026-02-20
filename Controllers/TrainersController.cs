@@ -138,7 +138,7 @@ namespace NovaFit.Controllers
             {
                 if (imageFile != null)
                 {
-                    // --- YENİ EKLENEN GÜVENLİK KONTROLÜ BAŞLANGICI ---
+                    // --- GÜVENLİK KONTROLÜ BAŞLANGICI ---
                     // İzin verilen uzantıları tanımlıyoruz
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 

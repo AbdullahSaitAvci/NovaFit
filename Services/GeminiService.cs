@@ -7,8 +7,8 @@ namespace NovaFit.Services
     {
         private readonly HttpClient _httpClient;
 
-        // Google API Key'in (NovaFit projesi için olan ...xhD8 ile biten)
-        private readonly string _apiKey = "AIzaSy.......................................";
+        // Google API Key
+        private readonly string _apiKey = " ";
 
         public GeminiService(HttpClient httpClient)
         {
@@ -18,7 +18,7 @@ namespace NovaFit.Services
 
         public async Task<string> AnalyzeAsync(string prompt, byte[] imageBytes = null)
         {
-            // 1. ÖNCELİK: Google Gemini 2.0 Flash Exp (En Kaliteli)
+            // 1. ÖNCELİK: Google Gemini 2.0 Flash Exp 
             var googleResult = await SendGoogleRequest(prompt);
 
             if (googleResult.Success)
@@ -27,7 +27,6 @@ namespace NovaFit.Services
             }
 
             // 2. YEDEK: Google hata verirse (429 Kota, 404 Bulunamadı vb.)
-            // Hiç beklemeden Pollinations'a geç (OpenAI Tabanlı & Reklamı Temizlenmiş)
             var pollResult = await SendPollinationsRequest(prompt);
 
             return pollResult;
@@ -65,7 +64,6 @@ namespace NovaFit.Services
         {
             try
             {
-                // Prompt'u URL uyumlu hale getir
                 // Pollinations'a "HTML Tablo yap" emrini net iletiyoruz
                 string cleanPrompt = "Sen spor koçusun. Türkçe HTML Tablo formatında beslenme ve antrenman yaz. " + prompt;
                 var encodedPrompt = Uri.EscapeDataString(cleanPrompt);
@@ -96,7 +94,7 @@ namespace NovaFit.Services
             }
         }
 
-        // Resim Linki (Burası zaten çalışıyor)
+        // Resim Linki 
         public string GenerateGoalImage(string prompt)
         {
             var encodedPrompt = Uri.EscapeDataString(prompt);

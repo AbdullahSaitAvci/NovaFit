@@ -19,7 +19,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false; // TODO: Canlıya geçerken burayı düzelt
+    options.Password.RequireNonAlphanumeric = false; 
     options.Password.RequiredLength = 3;
 
     // Kullanıcı ayarları
@@ -49,7 +49,7 @@ builder.Services.AddControllersWithViews()
     });
 builder.Services.AddRazorPages();
 
-// Gemini Servisini sisteme tanıtıyoruz
+// Gemini Servisini sisteme tanıtma
 builder.Services.AddHttpClient<NovaFit.Services.GeminiService>(); var app = builder.Build();
 
 // Configure the HTTP request pipeline.

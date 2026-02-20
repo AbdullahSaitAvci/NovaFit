@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using NovaFit.Models; // AppUser buradan geliyor
+using NovaFit.Models; 
 
 namespace NovaFit.Areas.Identity.Pages.Account
 {
@@ -44,14 +44,12 @@ namespace NovaFit.Areas.Identity.Pages.Account
 
         [BindProperty]
         public InputModel Input { get; set; }
-
         public string ReturnUrl { get; set; }
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         // Formdan gelecek verileri tanımlıyoruz
         public class InputModel
         {
-            // YENİ EKLEDİĞİMİZ ALAN:
             [Required(ErrorMessage = "Ad Soyad alanı zorunludur.")]
             [Display(Name = "Ad Soyad")]
             public string FullName { get; set; }

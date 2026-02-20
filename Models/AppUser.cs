@@ -10,7 +10,7 @@ namespace NovaFit.Models
         [Required(ErrorMessage = "Ad Soyad zorunludur.")]
         public string FullName { get; set; } = null!;
 
-        // İleride yapay zeka ve randevu için lazım olacak
+        // Yapay zeka ve randevu için gerekli bilgiler
         public int? Height { get; set; } // Boy
         public double? Weight { get; set; } // Kilo
 

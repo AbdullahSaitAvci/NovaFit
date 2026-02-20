@@ -97,8 +97,14 @@ namespace NovaFit.Services
         // Resim Linki 
         public string GenerateGoalImage(string prompt)
         {
+            // 1. Boşlukları ve özel karakterleri güvenli link formatına çeviriyoruz
             var encodedPrompt = Uri.EscapeDataString(prompt);
-            return $"https://image.pollinations.ai/prompt/{encodedPrompt}?width=1024&height=1024&nologo=true&model=flux&seed={DateTime.Now.Ticks}";
+
+            // 2. Sunucuyu yormayacak güvenli Seed
+            int safeSeed = new Random().Next(1, 9999999);
+
+            // 3. /p/ DEĞİL, doğrudan resmi döndüren /prompt/ adresini kullanıyoruz!
+            return $"https://pollinations.ai/prompt/{encodedPrompt}?width=1024&height=1024&nologo=true&seed={safeSeed}";
         }
     }
 }

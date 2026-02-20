@@ -16,6 +16,7 @@ namespace NovaFit.Data
         public DbSet<Trainer> Trainers { get; set; }
 
         public DbSet<TrainerAvailability> TrainerAvailabilities { get; set; }
+        public DbSet<TrainerSpecialization> TrainerSpecializations { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AiRecommendation> AiRecommendations { get; set; }
 

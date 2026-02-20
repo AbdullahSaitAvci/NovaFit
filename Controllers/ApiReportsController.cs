@@ -19,7 +19,7 @@ namespace NovaFit.Controllers
         [HttpGet("TrainerStats")]
         public IActionResult GetTrainerStats()
         {
-            // LINQ SORGUSU BURADA: Eğitmenleri ve randevu sayılarını getirir
+            // LINQ Sorgusu: Eğitmenleri ve randevu sayılarını getirir 
             var stats = _context.Trainers
                 .Select(t => new {
                     EgitmenAdi = t.FullName,

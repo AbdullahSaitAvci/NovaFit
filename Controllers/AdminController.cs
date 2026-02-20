@@ -17,7 +17,7 @@ namespace NovaFit.Controllers
 
         public IActionResult Index()
         {
-            // Bazı istatistikleri çekelim
+            // Bazı istatistikler 
             ViewBag.TrainerCount = _context.Trainers.Count();
             ViewBag.ServiceCount = _context.FitnessServices.Count();
             ViewBag.UserCount = _context.Users.Count();

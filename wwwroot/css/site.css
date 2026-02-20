@@ -1,4 +1,4 @@
-/* Aydınlık Tema (Varsayılan) */
+/* AydÄ±nlÄ±k Tema (VarsayÄ±lan) */
 :root {
     --ana-arkaplan: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
     --ana-yazi-rengi: #212529;
@@ -7,13 +7,13 @@
     --muted-rengi: #6c757d; /* Standart gri */
 }
 
-/* Karanlık Tema (Dark Mode) */
+/* KaranlÄ±k Tema (Dark Mode) */
 [data-bs-theme="dark"] {
     --ana-arkaplan: linear-gradient(120deg, #212529 0%, #343a40 100%);
     --ana-yazi-rengi: #e0e0e0;
     --nav-link-rengi: #f8f9fa;
     --baslik-rengi: #ffffff;
-    --muted-rengi: #adb5bd; /* Daha parlak bir gri (okunabilirlik için) */
+    --muted-rengi: #adb5bd; /* Daha parlak bir gri (okunabilirlik iÃ§in) */
 }
 
 
@@ -30,18 +30,18 @@ html {
 }
 
 body {
-    background: var(--ana-arkaplan); /* Artık değişkeni kullanıyor */
+    background: var(--ana-arkaplan); /* ArtÄ±k deÄŸiÅŸkeni kullanÄ±yor */
     color: var(--ana-yazi-rengi);
-    margin-bottom: 60px; /* Footer için boşluk */
-    transition: background 0.3s ease, color 0.3s ease; /* Geçiş yumuşatmak için */
+    margin-bottom: 60px; /* Footer iÃ§in boÅŸluk */
+    transition: background 0.3s ease, color 0.3s ease; /* GeÃ§iÅŸ yumuÅŸatmak iÃ§in */
 }
 
-/* Başlıkların rengini zorla */
+/* BaÅŸlÄ±klarÄ±n rengini zorla */
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: var(--baslik-rengi) !important;
 }
 
-/* Soluk yazıları (text-muted) değişkene bağladık */
+/* Soluk yazÄ±larÄ± (text-muted) deÄŸiÅŸkene baÄŸladÄ±k */
 .text-muted {
     color: var(--muted-rengi) !important;
 }
@@ -64,7 +64,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 /* Kart (Card) Efektleri */
 .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Kartların arkaplanını da temaya uydurmak istersen burayı açabilirsin: */
+    /* KartlarÄ±n arkaplanÄ±nÄ± da temaya uydurmak istersen burayÄ± aÃ§abilirsin: */
      background-color: rgba(255, 255, 255, 0.1); 
      border: 1px solid rgba(255, 255, 255, 0.1); 
 }
@@ -79,48 +79,46 @@ footer {
     box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
 }
 
-/* Varsayılan Bootstrap Focus Efektleri */
+/* VarsayÄ±lan Bootstrap Focus Efektleri */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 
-/* Navbar Linkleri (Giriş, Kayıt Ol, Antrenörler) */
-/* Normalde bunlar biraz şeffaf olur, biz tam beyaz ve parlak yapıyoruz */
+/* Navbar Linkleri (GiriÅŸ, KayÄ±t Ol, AntrenÃ¶rler) */
 .navbar-nav .nav-link {
     color: var(--nav-link-rengi) !important;
-    opacity: 1 !important; /* Şeffaflığı kaldır */
+    opacity: 1 !important; /* ÅeffaflÄ±ÄŸÄ± kaldÄ±r */
 }
 
 [data-bs-theme="dark"] .text-dark,
 [data-bs-theme="dark"] .link-dark {
-    color: #f8f9fa !important; /* Siyah yazıyı beyaza çevir */
+    color: #f8f9fa !important; /* Siyah yazÄ±yÄ± beyaza Ã§evir */
 }
 
-/* Genelde bu kısım da nav-link veya btn-link kullanır */
 .navbar-text a {
     color: var(--nav-link-rengi) !important;
     text-decoration: none;
 }
 
-/* Eğer başlıkta opacity varsa onu sıfırla ve rengi zorla */
+/* EÄŸer baÅŸlÄ±kta opacity varsa onu sÄ±fÄ±rla ve rengi zorla */
 h1, h2, h3, h4, h5, h6,
 .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
     color: var(--baslik-rengi) !important;
-    opacity: 1 !important; /* Solukluğu engelle */
+    opacity: 1 !important; /* SolukluÄŸu engelle */
 }
 
-/* VARSAYILAN (AYDINLIK TEMA) İÇİN HOVER */
-/* Zemin açık renk olduğu için üzerine gelince yazı KOYU olmalı */
+/* VARSAYILAN (AYDINLIK TEMA) Ä°Ã‡Ä°N HOVER */
+/* Zemin aÃ§Ä±k renk olduÄŸu iÃ§in Ã¼zerine gelince yazÄ± KOYU olmalÄ± */
 .navbar-nav .nav-link:hover,
 .navbar-text a:hover {
     color: #000000 !important; /* Tam siyah */
-    text-shadow: none; /* Aydınlıkta parlama efekti gözü yorar, kapattık */
-    transform: translateY(-1px); /* Hafif yukarı zıplama efekti */
+    text-shadow: none; /* AydÄ±nlÄ±kta parlama efekti gÃ¶zÃ¼ yorar, kapattÄ±k */
+    transform: translateY(-1px); /* Hafif yukarÄ± zÄ±plama efekti */
 }
 
-/* KARANLIK TEMA (DARK MODE) İÇİN HOVER */
-/* Zemin koyu olduğu için üzerine gelince yazı BEYAZ olmalı */
+/* KARANLIK TEMA (DARK MODE) Ä°Ã‡Ä°N HOVER */
+/* Zemin koyu olduÄŸu iÃ§in Ã¼zerine gelince yazÄ± BEYAZ olmalÄ± */
 [data-bs-theme="dark"] .navbar-nav .nav-link:hover,
 [data-bs-theme="dark"] .navbar-text a:hover {
     color: #ffffff !important; /* Tam beyaz */
